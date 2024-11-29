@@ -1,0 +1,2436 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{book}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+\frontmatter
+
+\mainmatter
+\chapter{Kalkulus dengan EMT}\label{kalkulus-dengan-emt}
+
+Materi Kalkulus mencakup di antaranya:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Fungsi (fungsi aljabar, trigonometri, eksponensial, logaritma, komposisi fungsi)
+\item
+  Limit Fungsi,
+\item
+  Turunan Fungsi,
+\item
+  Integral Tak Tentu,
+\item
+  Integral Tentu dan Aplikasinya,
+\item
+  Barisan dan Deret (kekonvergenan barisan dan deret).
+\end{enumerate}
+
+EMT (bersama Maxima) dapat digunakan untuk melakukan semua perhitungan di dalam kalkulus, baik secara numerik maupun analitik (eksak).
+
+\subsection{5.1 Mendefinisikan Fungsi}\label{mendefinisikan-fungsi}
+
+Terdapat beberapa cara mendefinisikan fungsi pada EMT, yakni:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Menggunakan format nama\_fungsi := rumus fungsi (untuk fungsi numerik),
+\item
+  Menggunakan format nama\_fungsi \&= rumus fungsi (untuk fungsi simbolik, namun dapat dihitung secara numerik),
+\item
+  Menggunakan format nama\_fungsi \&\&= rumus fungsi (untuk fungsi simbolik murni, tidak dapat dihitung langsung),
+\item
+  Fungsi sebagai program EMT.
+\end{enumerate}
+
+Setiap format harus diawali dengan perintah function (bukan sebagai ekspresi).
+
+Berikut adalah adalah beberapa contoh cara mendefinisikan fungsi: \[f(x)=2x^2+e^{\sin(x)}.\]\textgreater function f(x) := 2*x\^{}2+exp(sin(x)) // fungsi numerik
+
+\textgreater f(0), f(1), f(pi)
+
+\begin{verbatim}
+1
+4.31977682472
+20.7392088022
+\end{verbatim}
+
+\textgreater f(a) // tidak dapat dihitung nilainya
+
+\begin{verbatim}
+Variable or function a not found.
+Error in:
+f(a) // tidak dapat dihitung nilainya ...
+   ^
+\end{verbatim}
+
+Silakan Anda plot kurva fungsi di atas!
+
+Berikutnya kita definisikan fungsi: \(g(x)=\frac{\sqrt{x^2-3x}}{x+1}.\)
+
+\textgreater function g(x) := sqrt(x\^{}2-3*x)/(x+1)
+
+\textgreater g(3)
+
+\begin{verbatim}
+0
+\end{verbatim}
+
+\textgreater g(0)
+
+\begin{verbatim}
+0
+\end{verbatim}
+
+\textgreater g(1) // kompleks, tidak dapat dihitung oleh fungsi numerik
+
+\begin{verbatim}
+Floating point error!
+Error in sqrt
+Try "trace errors" to inspect local variables after errors.
+g:
+    useglobal; return sqrt(x^2-3*x)/(x+1) 
+Error in:
+g(1) // kompleks, tidak dapat dihitung oleh fungsi numerik ...
+    ^
+\end{verbatim}
+
+Silakan Anda plot kurva fungsi di atas!
+
+\textgreater f(g(5)) // komposisi fungsi
+
+\begin{verbatim}
+2.20920171961
+\end{verbatim}
+
+\textgreater g(f(5))
+
+\begin{verbatim}
+0.950898070639
+\end{verbatim}
+
+\textgreater function h(x) := f(g(x)) // definisi komposisi fungsi
+
+\textgreater h(5) // sama dengan f(g(5))
+
+\begin{verbatim}
+2.20920171961
+\end{verbatim}
+
+Silakan Anda plot kurva fungsi komposisi fungsi f dan g:\[h(x)=f(g(x))\]dan \[u(x)=g(f(x))\]bersama-sama kurva fungsi f dan g dalam satu bidang koordinat.
+
+\textgreater f(0:10) // nilai-nilai f(0), f(1), f(2), \ldots, f(10)
+
+\begin{verbatim}
+[1,  4.31978,  10.4826,  19.1516,  32.4692,  50.3833,  72.7562,
+99.929,  130.69,  163.51,  200.58]
+\end{verbatim}
+
+\textgreater fmap(0:10) // sama dengan f(0:10), berlaku untuk semua fungsi
+
+\begin{verbatim}
+[1,  4.31978,  10.4826,  19.1516,  32.4692,  50.3833,  72.7562,
+99.929,  130.69,  163.51,  200.58]
+\end{verbatim}
+
+\textgreater gmap(200:210)
+
+\begin{verbatim}
+[0.987534,  0.987596,  0.987657,  0.987718,  0.987778,  0.987837,
+0.987896,  0.987954,  0.988012,  0.988069,  0.988126]
+\end{verbatim}
+
+Misalkan kita akan mendefinisikan fungsi \[f(x) = \begin{cases} x^3 & x>0 \\ x^2 & x\le 0. \end{cases}\]Fungsi tersebut tidak dapat didefinisikan sebagai fungsi numerik secara ``inline'' menggunakan format :=, melainkan didefinisikan sebagai program. Perhatikan, kata ``map'' digunakan agar fungsi dapat menerima vektor sebagai input, dan hasilnya berupa vektor. Jika tanpa kata ``map'' fungsinya hanya dapat menerima input satu nilai.
+
+\textgreater function map f(x) \ldots{}
+
+\begin{verbatim}
+  if x>0 then return x^3
+  else return x^2
+  endif;
+endfunction
+\end{verbatim}
+
+\textgreater f(1)
+
+\begin{verbatim}
+1
+\end{verbatim}
+
+\textgreater f(-2)
+
+\begin{verbatim}
+4
+\end{verbatim}
+
+\textgreater f(-5:5)
+
+\begin{verbatim}
+[25,  16,  9,  4,  1,  0,  1,  8,  27,  64,  125]
+\end{verbatim}
+
+\textgreater aspect(1.5); plot2d(``f(x)'',-5,5):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-005.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-005.png}
+\end{figure}
+
+\textgreater function f(x) \&= 2*E\^{}x // fungsi simbolik
+
+\begin{verbatim}
+                                    x
+                                 2 E
+\end{verbatim}
+
+\textgreater{}\(f(a) // nilai fungsi secara simbolik\)\(2\,e^{a}\)\$\textgreater f(E) // nilai fungsi berupa bilangan desimal
+
+\begin{verbatim}
+30.308524483
+\end{verbatim}
+
+\textgreater\$f(E), \(float(%)
+\)\(30.30852448295852\)\$\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-008.png}}
+
+\textgreater function g(x) \&= 3*x+1
+
+\begin{verbatim}
+                               3 x + 1
+\end{verbatim}
+
+\textgreater function h(x) \&= f(g(x)) // komposisi fungsi
+
+\begin{verbatim}
+                                 3 x + 1
+                              2 E
+\end{verbatim}
+
+\textgreater plot2d(``h(x)'',-1,1): \pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-009.png}}
+
+\textbf{Latihan}
+
+Bukalah buku Kalkulus. Cari dan pilih beberapa (paling sedikit 5 fungsi berbeda tipe/bentuk/jenis) fungsi dari buku tersebut, kemudian definisikan fungsi-fungsi tersebut dan komposisinya di EMT pada baris-baris perintah berikut (jika perlu tambahkan lagi). Untuk setiap fungsi, hitung beberapa nilainya, baik untuk satu nilai maupun vektor. Gambar grafik fungsi-fungsi tersebut dan komposisi-komposisi 2 fungsi.
+
+Juga, carilah fungsi beberapa (dua) variabel. Lakukan hal sama seperti di atas.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Tentukan nilai F(0) dan f(7) dari \[f(x)= x^2-2x-24\]\textgreater{} function f(x) := (x\^{}2-2*x-24)
+\end{enumerate}
+
+\textgreater{} f(0), f(7)
+
+\begin{verbatim}
+-24
+11
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\item
+  Tentukan nilai z(8,3) dan gambarkan plot 3D dari fungsi \[f(x,y)=\frac {x^2+xy+y^2}{x^2}\]\textgreater{} function f(x,y) \&= (x\textsuperscript{2+x*y+y}2)/(x\^{}2)
+
+\begin{verbatim}
+                          2          2
+                         y  + x y + x
+                         -------------
+                               2
+                              x
+\end{verbatim}
+\end{enumerate}
+
+\textgreater{} f(8,3)
+
+\begin{verbatim}
+1.515625
+\end{verbatim}
+
+\textgreater plot3d(``f(x,y)'',-2,2):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-012.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-012.png}
+\end{figure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Diketahui fungsi \[g(x)=2x^2+4\] \[h(x)=7x-2\]
+\end{enumerate}
+
+tentukan nilai p(5) jika p(x)=g(h(x))
+
+\textgreater function g(x)\&=2*x\^{}2+4; function h(x)\&=7*x-2;
+
+\textgreater function p(x):= g(h(x))
+
+\textgreater p(5)
+
+\begin{verbatim}
+2182
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Gambarkan grafik dari
+\end{enumerate}
+
+\[f(x) = \begin{cases} x^2-9 & x>3 \\ x+3 & x\le 3. \end{cases}\]\textgreater function map f(x) \ldots{}
+
+\begin{verbatim}
+  if x>3 then return x^2-9
+  else return x+3
+  endif;
+endfunction
+\end{verbatim}
+
+\textgreater aspect(1.5); plot2d(``f(x)'',-5,5):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-016.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-016.png}
+\end{figure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Tentukan nilai f(6), f(-2), dan gambarkan grafik dari fungsi
+\end{enumerate}
+
+\[f(x)=x^2e^{-2x}+12\]\textgreater function f(x)\&=x\^{}2*exp(-2*x)+12
+
+\begin{verbatim}
+                             2  - 2 x
+                            x  E      + 12
+\end{verbatim}
+
+\textgreater f(6), f(-2)
+
+\begin{verbatim}
+12.0002211916
+230.392600133
+\end{verbatim}
+
+\textgreater plot2d(``f(x)'',-2,2):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-018.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-018.png}
+\end{figure}
+
+\subsection{5.2 Menghitung Limit}\label{menghitung-limit}
+
+Perhitungan limit pada EMT dapat dilakukan dengan menggunakan fungsi Maxima, yakni ``limit''. Fungsi ``limit'' dapat digunakan untuk menghitung limit fungsi dalam bentuk ekspresi maupun fungsi yang sudah didefinisikan sebelumnya. Nilai limit dapat dihitung pada sebarang nilai atau pada tak hingga (-inf, minf, dan inf). Limit kiri dan limit kanan juga dapat dihitung, dengan cara memberi opsi ``plus'' atau ``minus''. Hasil limit dapat berupa nilai, ``und'' (tak definisi), ``ind'' (tak tentu namun terbatas), ``infinity'' (kompleks tak hingga).
+
+Perhatikan beberapa contoh berikut. Perhatikan cara menampilkan perhitungan secara lengkap, tidak hanya menampilkan hasilnya saja.
+
+\textgreater\$showev('limit(sqrt(x\^{}2-3*x)/(x+1),x,inf))
+
+\[\lim_{x\rightarrow \infty }{\frac{\sqrt{x^2-3\,x}}{x+1}}=1\]\textgreater\$limit((x\textsuperscript{3-13*x}2+51*x-63)/(x\textsuperscript{3-4*x}2-3*x+18),x,3)
+
+\[-\frac{4}{5}\] \[\lim_{r\,\left(t-\sin t\right)\rightarrow 3}{\frac{51\,r\,\left(t- \sin t\right)+r^3\,\left(t-\sin t\right)^3-13\,r^2\,\left(t-\sin t\right)^2-63}{-3\,r\,\left(t-\sin t\right)+r^3\,\left(t-\sin t\right)^3-4\,r^2\,\left(t-\sin t\right)^2+18}}\] \[=\lim_{r\,\left(t-\sin t\right)\rightarrow 3}{\frac{51\,r\,\left(t-\sin t\right)+r^3\,\left(t-\sin t\right)^3-13\,r^2\,\left(t-\sin t\right)^2-63}{-3\,r\,\left(t-\sin t\right)+r^3\,\left(t-\sin t\right)^3-4\,r^2\,\left(t-\sin t\right)^2+18}}\]
+
+Fungsi tersebut diskontinu di titik x=3. Berikut adalah grafik fungsinya.
+
+\textgreater aspect(1.5); plot2d(``(x\textsuperscript{3-13*x}2+51*x-63)/(x\textsuperscript{3-4*x}2-3*x+18)'',0,4); plot2d(3,-4/5,\textgreater points,style=``ow'',\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-022.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-022.png}
+\end{figure}
+
+\textgreater\$limit(2*x*sin(x)/(1-cos(x)),x,0)
+
+\[4\] \[2\,\left(\lim_{r\,\left(t-\sin t\right)\rightarrow 0}{\frac{r\,\left(t-\sin t\right)\,\sin \left(r\,\left(t-\sin t\right)\right)}{1 -\cos \left(r\,\left(t-\sin t\right)\right)}}\right)\] \[=2\,\left(\lim_{r\,\left(t-\sin t\right)\rightarrow 0}{\frac{r\,\left(t-\sin \right)\,\sin \left(r\,\left(t-\sin t\right)\right)}{1-\cos \left(r\,\left(t-\sin t\right)\right)}}\right)\] Fungsi tersebut diskontinu di titik x=0. Berikut adalah grafik fungsinya.
+
+\textgreater plot2d(``2*x*sin(x)/(1-cos(x))'',-pi,pi); plot2d(0,4,\textgreater points,style=``ow'',\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-025.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-025.png}
+\end{figure}
+
+\textgreater\$limit(cot(7*h)/cot(5*h),h,0)
+
+\[\frac{5}{7}\] \[\lim_{h\rightarrow 0}{\frac{\cot \left(7\,h\right)}{\cot \left(5\,h\right)}}=\frac{5}{7}\]
+
+Fungsi tersebut juga diskontinu (karena tidak terdefinisi) di x=0. Berikut adalah grafiknya.
+
+\textgreater plot2d(``cot(7*x)/cot(5*x)'',-0.001,0.001); plot2d(0,5/7,\textgreater points,style=``ow'',\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-028.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-028.png}
+\end{figure}
+
+\textgreater\$showev('limit(((x/8)\^{}(1/3)-1)/(x-8),x,8))
+
+\[\lim_{x\rightarrow 8}{\frac{\frac{x^{\frac{1}{3}}}{2}-1}{x-8}}=  \frac{1}{24}\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(1/(2*x-1),x,0))
+
+\[\lim_{x\rightarrow 0}{\frac{1}{2\,x-1}}=-1\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit((x\^{}2-3*x-10)/(x-5),x,5))
+
+\[\lim_{x\rightarrow 5}{\frac{x^2-3\,x-10}{x-5}}=7\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(sqrt(x\^{}2+x)-x,x,inf))
+
+\[\lim_{x\rightarrow \infty }{\sqrt{x^2+x}-x}=\frac{1}{2}\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(abs(x-1)/(x-1),x,1,minus))
+
+\[\lim_{x\uparrow 1}{\frac{\left| x-1\right| }{x-1}}=-1\]Hitung limit di atas untuk x menuju 1 dari kanan.
+
+Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(sin(x)/x,x,0))
+
+\[\lim_{x\rightarrow 0}{\frac{\sin x}{x}}=1\]\textgreater plot2d(``sin(x)/x'',-pi,pi); plot2d(0,1,\textgreater points,style=``ow'',\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-035.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-035.png}
+\end{figure}
+
+\textgreater\$showev('limit(sin(x\^{}3)/x,x,0))
+
+\[\lim_{x\rightarrow 0}{\frac{\sin x^3}{x}}=0\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(log(x), x, minf))
+
+\[\lim_{x\rightarrow  -\infty }{\log x}={\it infinity}\]\textgreater\$showev('limit((-2)\^{}x,x, inf))
+
+\[\lim_{x\rightarrow \infty }{\left(-2\right)^{x}}={\it infinity}\]\textgreater\$showev('limit(t-sqrt(2-t),t,2,minus))
+
+\[\lim_{t\uparrow 2}{t-\sqrt{2-t}}=2\]\textgreater\$showev('limit(t-sqrt(2-t),t,2,plus))
+
+\[\lim_{t\downarrow 2}{t-\sqrt{2-t}}=2\]\textgreater\$showev('limit(t-sqrt(2-t),t,5,plus)) // Perhatikan hasilnya
+
+\[\lim_{t\downarrow 5}{t-\sqrt{2-t}}=5-\sqrt{3}\,i\]\textgreater plot2d(``x-sqrt(2-x)'',0,2):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-042.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-042.png}
+\end{figure}
+
+\textgreater\$showev('limit((x\textsuperscript{2-9)/(2*x}2-5*x-3),x,3))
+
+\[\lim_{x\rightarrow 3}{\frac{x^2-9}{2\,x^2-5\,x-3}}=\frac{6}{7}\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit((1-cos(x))/x,x,0))
+
+\[\lim_{x\rightarrow 0}{\frac{1-\cos x}{x}}=0\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit((x\textsuperscript{2+abs(x))/(x}2-abs(x)),x,0))
+
+\[\lim_{x\rightarrow 0}{\frac{\left| x\right| +x^2}{x^2-\left| x  \right| }}=-1\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit((1+1/x)\^{}x,x,inf))
+
+\[\lim_{x\rightarrow \infty }{\left(\frac{1}{x}+1\right)^{x}}=e\]\textgreater plot2d(``(1+1/x)\^{}x'',0,1000):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-047.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-047.png}
+\end{figure}
+
+\textgreater\$showev('limit((1+k/x)\^{}x,x,inf))
+
+\[\lim_{x\rightarrow \infty }{\left(\frac{k}{x}+1\right)^{x}}=e^{k}\]\textgreater\$showev('limit((1+x)\^{}(1/x),x,0))
+
+\[\lim_{x\rightarrow 0}{\left(x+1\right)^{\frac{1}{x}}}=e\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit((x/(x+k))\^{}x,x,inf))
+
+\[\lim_{x\rightarrow \infty }{\left(\frac{x}{x+k}\right)^{x}}=e^ {- k   }\]\textgreater\$showev('limit((exp(x)-exp(2))/(x-2),x,2))
+
+\[\lim_{x\rightarrow 2}{\frac{e^{x}-e^2}{x-2}}=e^2\]\textgreater\$showev('limit((E\textsuperscript{x-E}2)/(x-2),x,2))
+
+\[\lim_{x\rightarrow 2}{\frac{e^{x}-e^2}{x-2}}=e^2\]Tunjukkan limit tersebut dengan grafik, seperti contoh-contoh sebelumnya.
+
+\textgreater\$showev('limit(sin(1/x),x,0))
+
+\[\lim_{x\rightarrow 0}{\sin \left(\frac{1}{x}\right)}={\it ind}\]\textgreater\$showev('limit(sin(1/x),x,inf))
+
+\[\lim_{x\rightarrow \infty }{\sin \left(\frac{1}{x}\right)}=0\]\textgreater plot2d(``sin(1/x)'',-0.001,0.001):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-055.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-055.png}
+\end{figure}
+
+\textgreater plot3d(``sin(1/x)'',-0.001,0.001, zoom=5):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-056.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-056.png}
+\end{figure}
+
+\textbf{Latihan}
+
+Bukalah buku Kalkulus. Cari dan pilih beberapa (paling sedikit 5 fungsi berbeda tipe/bentuk/jenis) fungsi dari buku tersebut, kemudian definisikan di EMT pada baris-baris perintah berikut (jika perlu tambahkan lagi). Untuk setiap fungsi, hitung nilai limit fungsi tersebut di beberapa nilai dan di tak hingga. Gambar grafik fungsi tersebut untuk mengkonfirmasi nilai-nilai limit tersebut.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Tentukan hasil limit dari
+\end{enumerate}
+
+\[\lim_{y\to x/5}\frac{x^2-25y^2}{x-5y}\]\textgreater{} \&showev('limit((x\textsuperscript{2-25*y}2)/(x-5*y),y,x/5))
+
+\begin{verbatim}
+                               2       2
+                              x  - 25 y
+                       limit  ---------- = 2 x
+                            x  x - 5 y
+                       y -&gt; -
+                            5
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Tentukan hasil limit dari
+\end{enumerate}
+
+\[\lim_{x\to 4} \frac{\sqrt{x^2+9}}{x}\]\textgreater\&showev('limit((sqrt(x\^{}2+9))/x,x,4))
+
+\begin{verbatim}
+                                    2
+                              sqrt(x  + 9)   5
+                       limit  ------------ = -
+                       x -&gt; 4      x         4
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Tentukan hasil limit dibawah ini menggunakan maxima
+\end{enumerate}
+
+\[\lim_{x\to 0} \frac{sin(2x)}{x^2}\]\[\lim_{x\rightarrow 0}{\frac{\sin \left(2\,x\right)}{x^2}}=  {\it infinity}\]4. tentukan hasil dari
+
+\[\lim_{x\to inf} \frac{x^2}{cos(x)+1}\]\textgreater\$showev('limit((x\^{}2)/(1+cos(x)),x,inf))
+
+\[\lim_{x\rightarrow \infty }{\frac{x^2}{\cos x+1}}={\it und}\]5. Tentukan hasil dari limit dibawah ini dan gambarkan plotnya
+
+\[\lim_{x\to 1/2} x^3+3x+7\]\textgreater\$showev('limit(x\^{}3+3*x+7,x,1/2))
+
+\[\lim_{x\rightarrow \frac{1}{2}}{x^3+3\,x+7}=\frac{69}{8}\]\textgreater plot2d(``(x\^{}3+3*x+7)'',-1,1); plot2d(1/2,69/8,\textgreater points,style=``ow'',\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-065.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-065.png}
+\end{figure}
+
+\subsection{5.3 Turunan Fungsi}\label{turunan-fungsi}
+
+Definisi turunan:
+
+\[f'(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}\]Berikut adalah contoh-contoh menentukan turunan fungsi dengan menggunakan definisi turunan (limit).
+
+\textgreater\$showev('limit(((x+h)\textsuperscript{2-x}2)/h,h,0)) // turunan x\^{}2
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^2-x^2}{h}}=2\,x\] \[f\left(r\,\left(t-\sin t\right)\right)=\lim_{h\rightarrow 0}{\frac{f\left(r\,\left(t-\sin t\right)+h\right)-f\left(r\,\left(t-\sin t\right)\right)}{h}}\]
+
+\textgreater p \&= expand((x+h)\textsuperscript{2-x}2)\textbar simplify; \$p //pembilang dijabarkan dan disederhanakan
+
+\[2\,h\,x+h^2\]\textgreater q \&=ratsimp(p/h); \$q // ekspresi yang akan dihitung limitnya disederhanakan
+
+\[2\,x+h\]\textgreater\$limit(q,h,0) // nilai limit sebagai turunan
+
+\[2\,x\]\textgreater\$showev('limit(((x+h)\textsuperscript{n-x}n)/h,h,0)) // turunan x\^{}n
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^{n}-x^{n}}{h}}=n\,x^{n  -1}\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebut benar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+Sebagai petunjuk, ekspansikan (x+h)\^{}n dengan menggunakan teorema binomial.
+
+\textgreater\$showev('limit((sin(x+h)-sin(x))/h,h,0)) // turunan sin(x)
+
+\[\lim_{h\rightarrow 0}{\frac{\sin \left(x+h\right)-\sin x}{h}}=\cos   x\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebutbenar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+Sebagai petunjuk, ekspansikan sin(x+h) dengan menggunakan rumus jumlah dua sudut.
+
+\textgreater\$showev('limit((log(x+h)-log(x))/h,h,0)) // turunan log(x)
+
+\[\lim_{h\rightarrow 0}{\frac{\log \left(x+h\right)-\log x}{h}}=  \frac{1}{x}\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebutbenar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+Sebagai petunjuk, gunakan sifat-sifat logaritma dan hasil limit pada bagian sebelumnya di atas.
+
+\textgreater\$showev('limit((1/(x+h)-1/x)/h,h,0)) // turunan 1/x
+
+\[\lim_{h\rightarrow 0}{\frac{\frac{1}{x+h}-\frac{1}{x}}{h}}=-\frac{1  }{x^2}\]\textgreater\$showev('limit((E\textsuperscript{(x+h)-E}x)/h,h,0)) // turunan f(x)=e\^{}x
+
+\begin{verbatim}
+Answering "Is x an integer?" with "integer"
+Answering "Is x an integer?" with "integer"
+Answering "Is x an integer?" with "integer"
+Answering "Is x an integer?" with "integer"
+Answering "Is x an integer?" with "integer"
+Maxima is asking
+Acceptable answers are: yes, y, Y, no, n, N, unknown, uk
+Is x an integer?
+
+Use assume!
+Error in:
+ $showev('limit((E^(x+h)-E^x)/h,h,0)) // turunan f(x)=e^x ...
+                                     ^
+\end{verbatim}
+
+Maxima bermasalah dengan limit:
+
+\[\lim_{h\to 0}\frac{e^{x+h}-e^x}{h}.\]Oleh karena itu diperlukan trik khusus agar hasilnya benar.
+
+\textgreater\$showev('limit((E\^{}h-1)/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{e^{h}-1}{h}}=1\]\textgreater\$showev('factor(E\textsuperscript{(x+h)-E}x))
+
+\[{\it factor}\left(e^{x+h}-e^{x}\right)=\left(e^{h}-1\right)\,e^{x}\]\textgreater\$showev('limit(factor((E\textsuperscript{(x+h)-E}x)/h),h,0)) // turunan f(x)=e\^{}x
+
+\[\left(\lim_{h\rightarrow 0}{\frac{e^{h}-1}{h}}\right)\,e^{x}=e^{x}\]\textgreater function f(x) \&= x\^{}x
+
+\begin{verbatim}
+                                   x
+                                  x
+\end{verbatim}
+
+\textgreater\$showev('limit(f(x),x,0))
+
+\[\lim_{x\rightarrow 0}{x^{x}}=1\]Silakan Anda gambar kurva
+
+\textgreater\$showev('limit((f(x+h)-f(x))/h,h,0)) // turunan f(x)=x\^{}x
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^{x+h}-x^{x}}{h}}=  {\it infinity}\]Di sini Maxima juga bermasalah terkait limit:
+
+\[\lim_{h\to 0} \frac{(x+h)^{x+h}-x^x}{h}.\]Dalam hal ini diperlukan asumsi nilai x.
+
+\textgreater\&assume(x\textgreater0); \$showev('limit((f(x+h)-f(x))/h,h,0)) // turunan f(x)=x\^{}x
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^{x+h}-x^{x}}{h}}=x^{x}  \,\left(\log x+1\right)\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebut benar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+\textgreater\&forget(x\textgreater0) // jangan lupa, lupakan asumsi untuk kembali ke semula
+
+\begin{verbatim}
+                               [x &gt; 0]
+\end{verbatim}
+
+\textgreater\&forget(x\textless0)
+
+\begin{verbatim}
+                               [x &lt; 0]
+\end{verbatim}
+
+\textgreater\&facts()
+
+\begin{verbatim}
+                                  []
+\end{verbatim}
+
+\textgreater\$showev('limit((asin(x+h)-asin(x))/h,h,0)) // turunan arcsin(x)
+
+\[\lim_{h\rightarrow 0}{\frac{\arcsin \left(x+h\right)-\arcsin x}{h}}=  \frac{1}{\sqrt{1-x^2}}\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebut benar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+\textgreater\$showev('limit((tan(x+h)-tan(x))/h,h,0)) // turunan tan(x)
+
+\[\lim_{h\rightarrow 0}{\frac{\tan \left(x+h\right)-\tan x}{h}}=  \frac{1}{\cos ^2x}\]Mengapa hasilnya seperti itu? Tuliskan atau tunjukkan bahwa hasil limit tersebut benar, sehingga benar turunan fungsinya benar. Tulis penjelasan Anda di komentar ini.
+
+\textgreater function f(x) \&= sinh(x) // definisikan f(x)=sinh(x)
+
+\begin{verbatim}
+                               sinh(x)
+\end{verbatim}
+
+\textgreater function df(x) \&= limit((f(x+h)-f(x))/h,h,0); \$df(x) // df(x) = f'(x)
+
+\[\frac{e^ {- x }\,\left(e^{2\,x}+1\right)}{2}\]Hasilnya adalah cosh(x), karena
+
+\[\frac{e^x+e^{-x}}{2}=\cosh(x).\]\textgreater plot2d({[}``f(x)'',``df(x)''{]},-pi,pi,color={[}blue,red{]}):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-088.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-088.png}
+\end{figure}
+
+\textgreater function f(x) \&= sin(3*x\textsuperscript{5+7)}2
+
+\begin{verbatim}
+                               2    5
+                            sin (3 x  + 7)
+\end{verbatim}
+
+\textgreater diff(f,3), diffc(f,3)
+
+\begin{verbatim}
+1198.32948904
+1198.72863721
+\end{verbatim}
+
+Apakah perbedaan diff dan diffc?
+
+\textgreater\$showev('diff(f(x),x))
+
+\[\frac{d}{d\,x}\,\sin ^2\left(3\,x^5+7\right)=30\,x^4\,\cos \left(3  \,x^5+7\right)\,\sin \left(3\,x^5+7\right)\]\textgreater\$\% with x=3
+
+\[{\it \%at}\left(\frac{d}{d\,x}\,\sin ^2\left(3\,x^5+7\right) , x=3  \right)=2430\,\cos 736\,\sin 736\]\textgreater\$float(\%)
+
+\[{\it \%at}\left(\frac{d^{1.0}}{d\,x^{1.0}}\,\sin ^2\left(3.0\,x^5+  7.0\right) , x=3.0\right)=1198.728637211748\]\textgreater plot2d(f,0,3.1):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-092.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-092.png}
+\end{figure}
+
+\textgreater function f(x) \&=5*cos(2*x)-2*x*sin(2*x) // mendifinisikan fungsi f
+
+\begin{verbatim}
+                      5 cos(2 x) - 2 x sin(2 x)
+\end{verbatim}
+
+\textgreater function df(x) \&=diff(f(x),x) // fd(x) = f'(x)
+
+\begin{verbatim}
+                     - 12 sin(2 x) - 4 x cos(2 x)
+\end{verbatim}
+
+\textgreater\$'f(1)=f(1), \$float(f(1)), \$'f(2)=f(2), \$float(f(2)) // nilai f(1) dan f(2)
+
+\[-0.2410081230863468\]\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-094.png}}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-095.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-095.png}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-096.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-096.png}
+\end{figure}
+
+\textgreater xp=solve(``df(x)'',1,2,0) // solusi f'(x)=0 pada interval {[}1, 2{]}
+
+\begin{verbatim}
+1.35822987384
+\end{verbatim}
+
+\textgreater df(xp), f(xp) // cek bahwa f'(xp)=0 dan nilai ekstrim di titik tersebut
+
+\begin{verbatim}
+0
+-5.67530133759
+\end{verbatim}
+
+\textgreater plot2d({[}``f(x)'',``df(x)''{]},0,2*pi,color={[}blue,red{]}): //grafik fungsi dan turunannya
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-097.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-097.png}
+\end{figure}
+
+Perhatikan titik-titik ``puncak'' grafik y=f(x) dan nilai turunan pada saat grafik fungsinya mencapai titik ``puncak'' tersebut.
+
+\textbf{Latihan}
+
+Bukalah buku Kalkulus. Cari dan pilih beberapa (paling sedikit 5 fungsi berbeda tipe/bentuk/jenis) fungsi dari buku tersebut, kemudian definisikan di EMT pada baris-baris perintah berikut (jika perlu tambahkan lagi). Untuk setiap fungsi, tentukan turunannya dengan menggunakan definisi turunan (limit), menggunakan perintah diff, dan secara manual (langkah demi langkah yang dihitung dengan Maxima) seperti contoh-contoh di atas. Gambar grafik fungsi asli dan fungsi turunannya pada sumbu koordinat yang sama.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Tentukan turunan dari
+\end{enumerate}
+
+\[f(x)=x^3+7x\]Menghitung turunan menggunakan definisi turunan
+
+\textgreater\$showev('limit((((x+h)\textsuperscript{3+7*(x+h))-(x}3+7*x))/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^3-x^3+7\,\left(x+h  \right)-7\,x}{h}}=3\,x^2+7\]\textgreater function f(x) \&= x\^{}3+7*x;
+
+Menghitung turunan menggunakan perintah diff
+
+\textgreater function df(x) \&=diff(f(x),x)
+
+\begin{verbatim}
+                                  2
+                               3 x  + 7
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Tentukan turunan dari
+\end{enumerate}
+
+\[f(x)= \sqrt x\]Menghitung turunan menggunakan definisi turunan
+
+\textgreater\$showev('limit((sqrt(x+h)-sqrt(x))/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{\sqrt{x+h}-\sqrt{x}}{h}}=\frac{1}{2\,  \sqrt{x}}\]\textgreater function h(x) \&= sqrt(x);
+
+Menghitung turunan menggunakan perintah diff
+
+\textgreater function df(x) \&= diff(h(x),x)
+
+\begin{verbatim}
+                                  1
+                              ---------
+                              2 sqrt(x)
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Tentukan turunan dari
+\end{enumerate}
+
+\[g(x)= \frac {2}{x+3}\]Menghitung turunan menggunakan definisi turunan
+
+\textgreater\$showev('limit(((2/(x+h+3))-(2/(x+3)))/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{\frac{2}{x+h+3}-\frac{2}{x+3}}{h}}=-  \frac{2}{x^2+6\,x+9}\]\textgreater function g(x) \&= 2/(x+3);
+
+Menghitung menggunakan perintah diff
+
+\textgreater function df(x) \&= diff(g(x),x)
+
+\begin{verbatim}
+                                   2
+                              - --------
+                                       2
+                                (x + 3)
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Tentukan turunan dari
+\end{enumerate}
+
+\[c(x) = x^2+2x-15\]Menghitung menggunakan definisi turunan
+
+\textgreater\$showev('limit((((x+h)\textsuperscript{2+2*(x+h)-15)-(x}2+2*x-15))/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{\left(x+h\right)^2-x^2+2\,\left(x+h  \right)-2\,x}{h}}=2\,x+2\]\textgreater function c(x) \&= x\^{}2+2*x-15;
+
+Menghitung menggunakan perintah diff
+
+\textgreater function df(x) \&= diff(c(x),x)
+
+\begin{verbatim}
+                               2 x + 2
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Tentukan turunan dari
+\end{enumerate}
+
+\[H(x)=sin(x)-cos(x)\]Menghitung turunan menggunakan definisi turunan
+
+\textgreater\$showev('limit(((sin(x+h)-cos(x+h))-(sin(x)-cos(x)))/h,h,0))
+
+\[\lim_{h\rightarrow 0}{\frac{\sin \left(x+h\right)-\cos \left(x+h  \right)-\sin x+\cos x}{h}}=\sin x+\cos x\]\textgreater function H(x) \&= sin(x)-cos(x);
+
+Menghitung menggunakan perintah diff
+
+\textgreater function df(x) \&= diff(H(x),x)
+
+\begin{verbatim}
+                           sin(x) + cos(x)
+\end{verbatim}
+
+\subsection{5.4 Integral}\label{integral}
+
+EMT dapat digunakan untuk menghitung integral, baik integral tak tentu maupun integral tentu. Untuk integral tak tentu (simbolik) sudah tentu EMT menggunakan Maxima, sedangkan untuk perhitungan integral tentu EMT sudah menyediakan beberapa fungsi yang mengimplementasikan algoritma kuadratur (perhitungan integral tentu menggunakan metode numerik).
+
+Pada notebook ini akan ditunjukkan perhitungan integral tentu dengan menggunakan Teorema Dasar Kalkulus:
+
+\[\int_a^b f(x)\ dx = F(b)-F(a), \quad \text{ dengan  } F'(x) = f(x).\]Fungsi untuk menentukan integral adalah integrate. Fungsi ini dapat digunakan untuk menentukan, baik integral tentu maupun tak tentu (jika fungsinya memiliki antiderivatif). Untuk perhitungan integral tentu fungsi integrate menggunakan metode numerik (kecuali fungsinya tidak integrabel, kita tidak akan menggunakan metode ini).
+
+\textgreater\$showev('integrate(x\^{}n,x))
+
+\begin{verbatim}
+Answering "Is n equal to -1?" with "no"
+\end{verbatim}
+
+\[\int {x^{n}}{\;dx}=\frac{x^{n+1}}{n+1}\]\textgreater\$showev('integrate(1/(1+x),x))
+
+\[\int {\frac{1}{x+1}}{\;dx}=\log \left(x+1\right)\]\textgreater\$showev('integrate(1/(1+x\^{}2),x))
+
+\[\int {\frac{1}{x^2+1}}{\;dx}=\arctan x\]\textgreater\$showev('integrate(1/sqrt(1-x\^{}2),x))
+
+\[\int {\frac{1}{\sqrt{1-x^2}}}{\;dx}=\arcsin x\]\textgreater\$showev('integrate(sin(x),x,0,pi))
+
+\[\int_{0}^{\pi}{\sin x\;dx}=2\]\textgreater plot2d(``sin(x)'',0,2*pi):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-114.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-114.png}
+\end{figure}
+
+\textgreater\$showev('integrate(sin(x),x,a,b))
+
+\[\int_{a}^{b}{\sin x\;dx}=\cos a-\cos b\]\textgreater\$showev('integrate(x\^{}n,x,a,b))
+
+\begin{verbatim}
+Answering "Is n positive, negative or zero?" with "positive"
+\end{verbatim}
+
+\[\int_{a}^{b}{x^{n}\;dx}=\frac{b^{n+1}}{n+1}-\frac{a^{n+1}}{n+1}\]\textgreater\$showev('integrate(x\^{}2*sqrt(2*x+1),x))
+
+\[\int {x^2\,\sqrt{2\,x+1}}{\;dx}=\frac{\left(2\,x+1\right)^{\frac{7  }{2}}}{28}-\frac{\left(2\,x+1\right)^{\frac{5}{2}}}{10}+\frac{\left(  2\,x+1\right)^{\frac{3}{2}}}{12}\]\textgreater\$showev('integrate(x\^{}2*sqrt(2*x+1),x,0,2))
+
+\[\int_{0}^{2}{x^2\,\sqrt{2\,x+1}\;dx}=\frac{2\,5^{\frac{5}{2}}}{21}-  \frac{2}{105}\]\textgreater\$ratsimp(\%)
+
+\[\int_{0}^{2}{x^2\,\sqrt{2\,x+1}\;dx}=\frac{2\,5^{\frac{7}{2}}-2}{  105}\]\textgreater\$showev('integrate((sin(sqrt(x)+a)*E\textsuperscript{sqrt(x))/sqrt(x),x,0,pi}2))
+
+\[\int_{0}^{\pi^2}{\frac{\sin \left(\sqrt{x}+a\right)\,e^{\sqrt{x}}}{  \sqrt{x}}\;dx}=\left(-e^{\pi}-1\right)\,\sin a+\left(e^{\pi}+1  \right)\,\cos a\]\textgreater\$factor(\%)
+
+\[\int_{0}^{\pi^2}{\frac{\sin \left(\sqrt{x}+a\right)\,e^{\sqrt{x}}}{  \sqrt{x}}\;dx}=\left(-e^{\pi}-1\right)\,\left(\sin a-\cos a\right)\]\textgreater function map f(x) \&= E\textsuperscript{(-x}2)
+
+\begin{verbatim}
+                                    2
+                                 - x
+                                E
+\end{verbatim}
+
+\textgreater\$showev('integrate(f(x),x))
+
+\[\int {e^ {- x^2 }}{\;dx}=\frac{\sqrt{\pi}\,\mathrm{erf}\left(x  \right)}{2}\]Fungsi f tidak memiliki antiturunan, integralnya masih memuat integral lain.
+
+\[erf(x) = \int \frac{e^{-x^2}}{\sqrt{\pi}} \ dx.\]Kita tidak dapat menggunakan teorema Dasar kalkulus untuk menghitung integral tentu fungsi tersebut jika semua batasnya berhingga. Dalam hal ini dapat digunakan metode numerik (rumus kuadratur).
+
+Misalkan kita akan menghitung:
+
+\[\int_{0}^{\pi}{f\left(r\,\left(t-\sin t\right)\right)\;dr\,\left(t-
+ \sin t\right)}\]\textgreater x=0:0.1:pi-0.1; plot2d(x,f(x+0.1),\textgreater bar); plot2d(``f(x)'',0,pi,\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-125.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-125.png}
+\end{figure}
+
+Integral tentu
+
+\[\int_{0}^{\pi}{f\left(r\,\left(t-\sin t\right)\right)\;dr\,\left(t-
+ \sin t\right)}\]dapat dihampiri dengan jumlah luas persegi-persegi panjang di bawah kurva y=f(x) tersebut. Langkah-langkahnya adalah sebagai berikut.
+
+\textgreater t \&= makelist(a,a,0,pi-0.1,0.1); // t sebagai list untuk menyimpan nilai-nilai x
+
+\textgreater fx \&= makelist(f(t{[}i{]}+0.1),i,1,length(t)); // simpan nilai-nilai f(x)
+
+\textgreater// jangan menggunakan x sebagai list, kecuali Anda pakar Maxima!
+
+Hasilnya adalah:
+
+maxima: 'integrate(f(x),x,0,pi) = 0.1*sum(fx{[}i{]},i,1,length(fx))
+
+Jumlah tersebut diperoleh dari hasil kali lebar sub-subinterval (=0.1) dan jumlah nilai-nilai f(x) untuk x = 0.1, 0.2, 0.3, \ldots, 3.2.
+
+\textgreater0.1*sum(f(x+0.1)) // cek langsung dengan perhitungan numerik EMT
+
+\begin{verbatim}
+0.836219610253
+\end{verbatim}
+
+Untuk mendapatkan nilai integral tentu yang mendekati nilai sebenarnya, lebar sub-intervalnya dapat diperkecil lagi, sehingga daerah di bawah kurva tertutup semuanya, misalnya dapat digunakan lebar subinterval 0.001. (Silakan dicoba!)
+
+Meskipun Maxima tidak dapat menghitung integral tentu fungsi tersebut untuk batas-batas yang berhingga, namun integral tersebut dapat dihitung secara eksak jika batas-batasnya tak hingga. Ini adalah salah satu keajaiban di dalam matematika, yang terbatas tidak dapat dihitung secara eksak, namun yang tak hingga malah dapat dihitung secara eksak.
+
+\textgreater\$showev('integrate(f(x),x,0,inf))
+
+\[\int_{0}^{\infty }{e^ {- x^2 }\;dx}=\frac{\sqrt{\pi}}{2}\]Tunjukkan kebenaran hasil di atas!
+
+Berikut adalah contoh lain fungsi yang tidak memiliki antiderivatif, sehingga integral tentunya hanya dapat dihitung dengan metode numerik.
+
+\textgreater function f(x) \&= x\^{}x
+
+\begin{verbatim}
+                                   x
+                                  x
+\end{verbatim}
+
+\textgreater\$showev('integrate(f(x),x,0,1))
+
+\[\int_{0}^{1}{x^{x}\;dx}=\int_{0}^{1}{x^{x}\;dx}\]\textgreater x=0:0.1:1-0.01; plot2d(x,f(x+0.01),\textgreater bar); plot2d(``f(x)'',0,1,\textgreater add):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-129.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-129.png}
+\end{figure}
+
+Maxima gagal menghitung integral tentu tersebut secara langsung menggunakan perintah integrate. Berikut kita lakukan seperti contoh sebelumnya untuk mendapat hasil atau pendekatan nilai integral tentu tersebut.
+
+\textgreater t \&= makelist(a,a,0,1-0.01,0.01);
+
+\textgreater fx \&= makelist(f(t{[}i{]}+0.01),i,1,length(t));
+
+\[\int_{0}^{1}{\sin ^2\left(3\,x^5+7\right)\;dx}=0.7834935879025506\]Apakah hasil tersebut cukup baik? perhatikan gambarnya.
+
+\textgreater function f(x) \&= sin(3*x\textsuperscript{5+7)}2
+
+\begin{verbatim}
+                               2    5
+                            sin (3 x  + 7)
+\end{verbatim}
+
+\textgreater integrate(f,0,1)
+
+\begin{verbatim}
+0.542581176074
+\end{verbatim}
+
+\textgreater\$showev('integrate(f(x),x,0,1))
+
+\[\int_{0}^{1}{\sin ^2\left(3\,x^5+7\right)\;dx}=\frac{\Gamma\left(  \frac{1}{5}\right)\,\sin 14\,\sin \left(\frac{\pi}{10}\right)}{10\,6  ^{\frac{1}{5}}}-\frac{\left(\left(6^{\frac{4}{5}}\,  {\it gamma\_\_incomplete}\left(\frac{1}{5} , 6\,i\right)+6^{\frac{4  }{5}}\,{\it gamma\_\_incomplete}\left(\frac{1}{5} , -6\,i\right)  \right)\,\sin 14+\left(6^{\frac{4}{5}}\,i\,{\it gamma\_\_incomplete}  \left(\frac{1}{5} , 6\,i\right)-6^{\frac{4}{5}}\,i\,  {\it gamma\_\_incomplete}\left(\frac{1}{5} , -6\,i\right)\right)\,  \cos 14\right)\,\sin \left(\frac{\pi}{10}\right)-60}{120}\]\textgreater\$float(\%)
+
+\[\int_{0.0}^{1.0}{\sin ^2\left(3.0\,x^5+7.0\right)\;dx}=  0.09820784258795788-0.008333333333333333\,\left(0.3090169943749474\,  \left(0.1367372182078336\,\left(4.192962712629476\,i\,  {\it gamma\_\_\_\_incomplete}\left(0.2 , 6.0\,i\right)-  4.192962712629476\,i\,{\it gamma\_\_\_\_incomplete}\left(0.2 , -6.0  \,i\right)\right)+0.9906073556948704\,\left(4.192962712629476\,  {\it gamma\_\_\_\_incomplete}\left(0.2 , 6.0\,i\right)+  4.192962712629476\,{\it gamma\_\_\_\_incomplete}\left(0.2 , -6.0\,i  \right)\right)\right)-60.0\right)\]\textgreater\$showev('integrate(x*exp(-x),x,0,1)) // Integral tentu (eksak)
+
+\[\int_{0}^{1}{x\,e^ {- x }\;dx}=1-2\,e^ {- 1 }\] 
+
+\subsection{5.5 Aplikasi Integral Tentu}
+
+\textgreater plot2d(``x\^{}3-x'',-0.1,1.1); plot2d(``-x\^{}2'',\textgreater add); \ldots{}\\
+\textgreater{} b=solve(``x\textsuperscript{3-x+x}2'',0.5); x=linspace(0,b,200); xi=flipx(x); \ldots{}\\
+\textgreater{} plot2d(x\textbar xi,x\textsuperscript{3-x\textbar-xi}2,\textgreater filled,style=``\textbar{}'',fillcolor=1,\textgreater add): // Plot daerah antara 2 kurva
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-134.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-134.png}
+\end{figure}
+
+\textgreater a=solve(``x\textsuperscript{3-x+x}2'',0), b=solve(``x\textsuperscript{3-x+x}2'',1) // absis titik-titik potong kedua kurva
+
+\begin{verbatim}
+0
+0.61803398875
+\end{verbatim}
+
+\textgreater integrate(``(-x\textsuperscript{2)-(x}3-x)'',a,b) // luas daerah yang diarsir
+
+\begin{verbatim}
+0.0758191713542
+\end{verbatim}
+
+Hasil tersebut akan kita bandingkan dengan perhitungan secara analitik.
+
+\textgreater a \&= solve((-x\textsuperscript{2)-(x}3-x),x); \$a // menentukan absis titik potong kedua kurva secara eksak
+
+\[\left[ x=\frac{-\sqrt{5}-1}{2} , x=\frac{\sqrt{5}-1}{2} , x=0   \right]\]
+
+\textgreater\$showev('integrate(-x\textsuperscript{2-x}3+x,x,0,(sqrt(5)-1)/2)) // Nilai integral secara eksak
+
+\[\int_{0}^{\frac{\sqrt{5}-1}{2}}{-x^3-x^2+x\;dx}=\frac{13-5^{\frac{3  }{2}}}{24}\]\textgreater\$float(\%)
+
+\[\int_{0.0}^{0.6180339887498949}{-1.0\,x^3-1.0\,x^2+x\;dx}=  0.07581917135421037\] 
+
+\subsection{5.6 Panjang Kurva}
+
+Hitunglah panjang kurva berikut ini dan luas daerah di dalam kurva tersebut.
+
+\[\gamma(t) = (r(t) \cos(t), r(t) \sin(t))\]dengan
+
+\[r(t) = 1 + \dfrac{\sin(3t)}{2},\quad 0\le t\le 2\pi.\]\textgreater t=linspace(0,2pi,1000); r=1+sin(3*t)/2; x=r*cos(t); y=r*sin(t); \ldots{}\\
+\textgreater{} plot2d(x,y,\textgreater filled,fillcolor=red,style=``/'',r=1.5): // Kita gambar kurvanya terlebih dahulu
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-140.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-140.png}
+\end{figure}
+
+\textgreater function r(t) \&= 1+sin(3*t)/2; \$'r(t)=r(t)
+
+\[r\left(t\right)=\frac{\sin \left(3\,t\right)}{2}+1\]\textgreater function fx(t) \&= r(t)*cos(t); \$'fx(t)=fx(t)
+
+\[{\it fx}\left(t\right)=\cos t\,\left(\frac{\sin \left(3\,t\right)}{  2}+1\right)\]\textgreater function fy(t) \&= r(t)*sin(t); \$'fy(t)=fy(t)
+
+\[{\it fy}\left(t\right)=\sin t\,\left(\frac{\sin \left(3\,t\right)}{  2}+1\right)\]\textgreater function ds(t) \&= trigreduce(radcan(sqrt(diff(fx(t),t)\textsuperscript{2+diff(fy(t),t)}2))): \$'ds(t)=ds(t)
+
+\begin{verbatim}
+                            ds(t) = ds(t)
+\end{verbatim}
+
+\textgreater\$integrate(ds(x),x,0,2*pi) //panjang (keliling) kurva
+
+\begin{verbatim}
+Maxima said:
+Maxima encountered a Lisp error:
+
+ Control stack exhausted (no more space for function call frames).
+This is probably due to heavily nested or infinitely recursive function
+calls, or a tail call that SBCL cannot or has not optimized away.
+
+PROCEED WITH CAUTION.
+
+Automatically continuing.
+To enable the Lisp debugger set *debugger-hook* to nil.
+
+Error in:
+ $integrate(ds(x),x,0,2*pi) //panjang (keliling) kurva ...
+                           ^
+\end{verbatim}
+
+Maxima gagal melakukan perhitungan eksak integral tersebut.
+
+Berikut kita hitung integralnya secara umerik dengan perintah EMT.
+
+\textgreater integrate(``ds(x)'',0,2*pi)
+
+\begin{verbatim}
+Syntax error in expression, or unfinished expression!
+ds:
+    useglobal; return 'ds(t) = ds(t) 
+Error in expression: ds(x)
+ %mapexpression1:
+    return expr(x,args());
+Error in map.
+ %evalexpression:
+    if maps then return %mapexpression1(x,f$;args());
+gauss:
+    if maps then y=%evalexpression(f$,a+h-(h*xn)',maps;args());
+adaptivegauss:
+    t1=gauss(f$,c,c+h;args(),=maps);
+Try "trace errors" to inspect local variables after errors.
+integrate:
+    return adaptivegauss(f$,a,b,eps*1000;args(),=maps);
+\end{verbatim}
+
+Spiral Logaritmik
+
+\[x=e^{ax}\cos x,\ y=e^{ax}\sin x.\]\textgreater a=0.1; plot2d(``exp(a*x)*cos(x)'',``exp(a*x)*sin(x)'',r=2,xmin=0,xmax=2*pi):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-145.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-145.png}
+\end{figure}
+
+\textgreater\&kill(a) // hapus expresi a
+
+\begin{verbatim}
+                                 done
+\end{verbatim}
+
+\textgreater function fx(t) \&= exp(a*t)*cos(t); \$'fx(t)=fx(t)
+
+\[{\it fx}\left(t\right)=e^{a\,t}\,\cos t\]\textgreater function fy(t) \&= exp(a*t)*sin(t); \$'fy(t)=fy(t)
+
+\[{\it fy}\left(t\right)=e^{a\,t}\,\sin t\]\textgreater function df(t) \&= trigreduce(radcan(sqrt(diff(fx(t),t)\textsuperscript{2+diff(fy(t),t)}2))); \$'df(t)=df(t)
+
+\[{\it df}\left(t\right)=\sqrt{a^2+1}\,e^{a\,t}\]\textgreater S \&=integrate(df(t),t,0,2*\%pi); \$S // panjang kurva (spiral)
+
+\[\sqrt{a^2+1}\,\left(\frac{e^{2\,\pi\,a}}{a}-\frac{1}{a}\right)\]\textgreater S(a=0.1) // Panjang kurva untuk a=0.1
+
+\begin{verbatim}
+8.78817491636
+\end{verbatim}
+
+Soal:
+
+Tunjukkan bahwa keliling lingkaran dengan jari-jari r adalah K=2.pi.r.
+
+Berikut adalah contoh menghitung panjang parabola.
+
+\textgreater plot2d(``x\^{}2'',xmin=-1,xmax=1):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-150.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-150.png}
+\end{figure}
+
+\textgreater\$showev('integrate(sqrt(1+diff(x\textsuperscript{2,x)}2),x,-1,1))
+
+\[\int_{-1}^{1}{\sqrt{4\,x^2+1}\;dx}=\frac{{\rm asinh}\; 2+2\,\sqrt{5  }}{2}\]\textgreater\$float(\%)
+
+\[\int_{-1.0}^{1.0}{\sqrt{4.0\,x^2+1.0}\;dx}=2.957885715089195\]\textgreater x=-1:0.2:1; y=x\^{}2; plot2d(x,y); \ldots{}\\
+\textgreater{} plot2d(x,y,points=1,style=``o\#'',add=1):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-153.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-153.png}
+\end{figure}
+
+Panjang tersebut dapat dihampiri dengan menggunakan jumlah panjang ruas-ruas garis yang menghubungkan titik-titik pada parabola tersebut.
+
+\textgreater i=1:cols(x)-1; sum(sqrt((x{[}i+1{]}-x{[}i{]})\textsuperscript{2+(y{[}i+1{]}-y{[}i{]})}2))
+
+\begin{verbatim}
+2.95191957027
+\end{verbatim}
+
+Hasilnya mendekati panjang yang dihitung secara eksak. Untuk mendapatkan hampiran yang cukup akurat, jarak antar titik dapat diperkecil, misalnya 0.1, 0.05, 0.01, dan seterusnya. Cobalah Anda ulangi perhitungannya dengan nilai-nilai tersebut.
+
+\subsection{5.7 Koordinat Kartesius}\label{koordinat-kartesius}
+
+Berikut diberikan contoh perhitungan panjang kurva menggunakan koordinat Kartesius. Kita akan hitung panjang kurva dengan persamaan implisit:
+
+\[x^3+y^3-3xy=0.\]\textgreater z \&= x\textsuperscript{3+y}3-3*x*y; \$z
+
+\[y^3-3\,x\,y+x^3\]\textgreater plot2d(z,r=2,level=0,n=100):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-156.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-156.png}
+\end{figure}
+
+Kita tertarik pada kurva di kuadran pertama.
+
+\textgreater plot2d(z,a=0,b=2,c=0,d=2,level={[}-10;0{]},n=100,contourwidth=3,style=``/''):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-157.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-157.png}
+\end{figure}
+
+Kita selesaikan persamaannya untuk x.
+
+\textgreater\$z with y=l*x, sol \&= solve(\%,x); \$sol
+
+\[\left[ x=\frac{3\,l}{l^3+1} , x=0 \right] \]\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-159.png}}
+
+Kita gunakan solusi tersebut untuk mendefinisikan fungsi dengan Maxima.
+
+\textgreater function f(l) \&= rhs(sol{[}1{]}); \$'f(l)=f(l)
+
+\[f\left(l\right)=\frac{3\,l}{l^3+1}\]Fungsi tersebut juga dapat digunaka untuk menggambar kurvanya. Ingat, bahwa fungsi tersebut adalah nilai x dan nilai y=l\emph{x, yakni x=f(l) dan y=l}f(l).
+
+\textgreater plot2d(\&f(x),\&x*f(x),xmin=-0.5,xmax=2,a=0,b=2,c=0,d=2,r=1.5):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-161.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-161.png}
+\end{figure}
+
+Elemen panjang kurva adalah:
+
+\[ds=\sqrt{f'(l)^2+(lf'(l)+f(l))^2}.\]\textgreater function ds(l) \&= ratsimp(sqrt(diff(f(l),l)\textsuperscript{2+diff(l*f(l),l)}2)); \$'ds(l)=ds(l)
+
+\[{\it ds}\left(l\right)=\frac{\sqrt{9\,l^8+36\,l^6-36\,l^5-36\,l^3+  36\,l^2+9}}{\sqrt{l^{12}+4\,l^9+6\,l^6+4\,l^3+1}}\]\textgreater\$integrate(ds(l),l,0,1)
+
+\[\int_{0}^{1}{\frac{\sqrt{9\,l^8+36\,l^6-36\,l^5-36\,l^3+36\,l^2+9}  }{\sqrt{l^{12}+4\,l^9+6\,l^6+4\,l^3+1}}\;dl}\]Integral tersebut tidak dapat dihitung secara eksak menggunakan Maxima. Kita hitung integral etrsebut secara numerik dengan Euler. Karena kurva simetris, kita hitung untuk nilai variabel integrasi dari 0 sampai 1, kemudian hasilnya dikalikan 2.
+
+\textgreater2*integrate(``ds(x)'',0,1)
+
+\begin{verbatim}
+4.91748872168
+\end{verbatim}
+
+\textgreater2*romberg(\&ds(x),0,1)// perintah Euler lain untuk menghitung nilai hampiran integral yang sama
+
+\begin{verbatim}
+4.91748872168
+\end{verbatim}
+
+Perhitungan di datas dapat dilakukan untuk sebarang fungsi x dan y dengan mendefinisikan fungsi EMT, misalnya kita beri nama panjangkurva. Fungsi ini selalu memanggil Maxima untuk menurunkan fungsi yang diberikan.
+
+\textgreater function panjangkurva(fx,fy,a,b) \ldots{}
+
+\begin{verbatim}
+ds=mxm("sqrt(diff(@fx,x)^2+diff(@fy,x)^2)");
+return romberg(ds,a,b);
+endfunction
+\end{verbatim}
+
+\textgreater panjangkurva(``x'',``x\^{}2'',-1,1) // cek untuk menghitung panjang kurva parabola sebelumnya
+
+\begin{verbatim}
+2.95788571509
+\end{verbatim}
+
+Bandingkan dengan nilai eksak di atas.
+
+\textgreater2*panjangkurva(mxm(``f(x)''),mxm(``x*f(x)''),0,1) // cek contoh terakhir, bandingkan hasilnya!
+
+\begin{verbatim}
+4.91748872168
+\end{verbatim}
+
+Kita hitung panjang spiral Archimides berikut ini dengan fungsi tersebut.
+
+\textgreater plot2d(``x*cos(x)'',``x*sin(x)'',xmin=0,xmax=2*pi,square=1):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-165.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-165.png}
+\end{figure}
+
+\textgreater panjangkurva(``x*cos(x)'',``x*sin(x)'',0,2*pi)
+
+\begin{verbatim}
+21.2562941482
+\end{verbatim}
+
+Berikut kita definisikan fungsi yang sama namun dengan Maxima, untuk perhitungan eksak.
+
+\textgreater\&kill(ds,x,fx,fy)
+
+\begin{verbatim}
+                                 done
+\end{verbatim}
+
+\textgreater function ds(fx,fy) \&\&= sqrt(diff(fx,x)\textsuperscript{2+diff(fy,x)}2)
+
+\begin{verbatim}
+                           2              2
+                  sqrt(diff (fy, x) + diff (fx, x))
+\end{verbatim}
+
+\textgreater sol \&= ds(x*cos(x),x*sin(x)); \$sol // Kita gunakan untuk menghitung panjang kurva terakhir di atas
+
+\[\sqrt{\left(\cos x-x\,\sin x\right)^2+\left(\sin x+x\,\cos x\right)  ^2}\]\textgreater\$sol \textbar{} trigreduce \textbar{} expand, \$integrate(\%,x,0,2*pi), \%()
+
+\[\frac{{\rm asinh}\; \left(2\,\pi\right)+2\,\pi\,\sqrt{4\,\pi^2+1}}{  2}\]\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-168.png}}
+
+\begin{verbatim}
+21.2562941482
+\end{verbatim}
+
+Hasilnya sama dengan perhitungan menggunakan fungsi EMT.
+
+Berikut adalah contoh lain penggunaan fungsi Maxima tersebut.
+
+\textgreater plot2d(``3*x\textsuperscript{2-1'',''3*x}3-1'',xmin=-1/sqrt(3),xmax=1/sqrt(3),square=1):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-169.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-169.png}
+\end{figure}
+
+\textgreater sol \&= radcan(ds(3*x\textsuperscript{2-1,3*x}3-1)); \$sol
+
+\[3\,x\,\sqrt{9\,x^2+4}\]\textgreater\$showev('integrate(sol,x,0,1/sqrt(3))), \$2*float(\%) // panjang kurva di atas
+
+\[6.0\,\int_{0.0}^{0.5773502691896258}{x\,\sqrt{9.0\,x^2+4.0}\;dx}=  2.337835372767141\]\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-172.png}}
+
+\subsection{5.8 Sikloid}\label{sikloid}
+
+Berikut kita akan menghitung panjang kurva lintasan (sikloid) suatu titik pada lingkaran yang berputar ke kanan pada permukaan datar. Misalkan jari-jari lingkaran tersebut adalah r. Posisi titik pusat lingkaran pada saat t adalah:
+
+\[(rt,r).\]Misalkan posisi titik pada lingkaran tersebut mula-mula (0,0) dan posisinya pada saat t adalah:
+
+\[(r(t-\sin(t)),r(1-\cos(t))).\]Berikut kita plot lintasan tersebut dan beberapa posisi lingkaran ketika t=0, t=pi/2, t=r*pi.
+
+\textgreater x \&= r*(t-sin(t))
+
+\begin{verbatim}
+                            r (t - sin(t))
+\end{verbatim}
+
+\textgreater y \&= r*(1-cos(t))
+
+\begin{verbatim}
+                            r (1 - cos(t))
+\end{verbatim}
+
+Berikut kita gambar sikloid untuk r=1.
+
+\textgreater ex \&= x-sin(x); ey \&= 1-cos(x); aspect(1);
+
+\textgreater plot2d(ex,ey,xmin=0,xmax=4pi,square=1); \ldots{}\\
+\textgreater{} plot2d(``2+cos(x)'',``1+sin(x)'',xmin=0,xmax=2pi,\textgreater add,color=blue); \ldots{}\\
+\textgreater{} plot2d({[}2,ex(2){]},{[}1,ey(2){]},color=red,\textgreater add); \ldots{}\\
+\textgreater{} plot2d(ex(2),ey(2),\textgreater points,\textgreater add,color=red); \ldots{}\\
+\textgreater{} plot2d(``2pi+cos(x)'',``1+sin(x)'',xmin=0,xmax=2pi,\textgreater add,color=blue); \ldots{}\\
+\textgreater{} plot2d({[}2pi,ex(2pi){]},{[}1,ey(2pi){]},color=red,\textgreater add); \ldots{}\\
+\textgreater{} plot2d(ex(2pi),ey(2pi),\textgreater points,\textgreater add,color=red):
+
+\begin{verbatim}
+Variable or function t not found.
+Error in expression: r*(t-sin(t))-sin(r*(t-sin(t)))
+adaptiveeval:
+    sx=f$(t;args());
+Try "trace errors" to inspect local variables after errors.
+plot2d:
+    dw/n,dw/n^2,dw/n;args());
+\end{verbatim}
+
+Berikut dihitung panjang lintasan untuk 1 putaran penuh. (Jangan salah menduga bahwa panjang lintasan 1 putaran penuh sama dengan keliling lingkaran!)
+
+\textgreater ds \&= radcan(sqrt(diff(ex,x)\textsuperscript{2+diff(ey,x)}2)); \$ds=trigsimp(ds) // elemen panjang kurva sikloid
+
+\begin{verbatim}
+Maxima said:
+diff: second argument must be a variable; found r*(t-sin(t))
+ -- an error. To debug this try: debugmode(true);
+
+Error in:
+ds &amp;= radcan(sqrt(diff(ex,x)^2+diff(ey,x)^2)); $ds=trigsimp(ds ...
+                                             ^
+\end{verbatim}
+
+\textgreater ds \&= trigsimp(ds); \$ds
+
+\[{\it ds}\]\textgreater\$showev('integrate(ds,x,0,2*pi)) // hitung panjang sikloid satu putaran penuh
+
+\begin{verbatim}
+Maxima said:
+defint: variable of integration must be a simple or subscripted variable.
+defint: found r*(t-sin(t))
+#0: showev(f='integrate(ds,r*(t-sin(t)),0,2*pi))
+ -- an error. To debug this try: debugmode(true);
+
+Error in:
+$showev('integrate(ds,x,0,2*pi)) // hitung panjang sikloid sat ...
+                                 ^
+\end{verbatim}
+
+\textgreater integrate(mxm(``ds''),0,2*pi) // hitung secara numerik
+
+\begin{verbatim}
+Illegal function result in map.
+ %evalexpression:
+    if maps then return %mapexpression1(x,f$;args());
+gauss:
+    if maps then y=%evalexpression(f$,a+h-(h*xn)',maps;args());
+adaptivegauss:
+    t1=gauss(f$,c,c+h;args(),=maps);
+Try "trace errors" to inspect local variables after errors.
+integrate:
+    return adaptivegauss(f$,a,b,eps*1000;args(),=maps);
+\end{verbatim}
+
+\textgreater romberg(mxm(``ds''),0,2*pi) // cara lain hitung secara numerik
+
+\begin{verbatim}
+Wrong argument!
+
+Cannot combine a symbolic expression here.
+Did you want to create a symbolic expression?
+Then start with &amp;.
+
+Try "trace errors" to inspect local variables after errors.
+romberg:
+    if cols(y)==1 then return y*(b-a); endif;
+Error in:
+romberg(mxm("ds"),0,2*pi) // cara lain hitung secara numerik ...
+                         ^
+\end{verbatim}
+
+Perhatikan, seperti terlihat pada gambar, panjang sikloid lebih besar daripada keliling lingkarannya, yakni:
+
+\[2\pi.\] 
+
+\subsection{5.9 Kurvatur (Kelengkungan) Kurva}
+
+image: Osculating.png
+
+Aslinya, kelengkungan kurva diferensiabel (yakni, kurva mulus yang tidak lancip) di titik P didefinisikan melalui lingkaran oskulasi (yaitu, lingkaran yang melalui titik P dan terbaik memperkirakan, paling banyak menyinggung kurva di sekitar P). Pusat dan radius kelengkungan kurva di P adalah pusat dan radius lingkaran oskulasi. Kelengkungan adalah kebalikan dari radius kelengkungan:
+
+\[\kappa =\frac {1}{R}\]dengan R adalah radius kelengkungan. (Setiap lingkaran memiliki kelengkungan ini pada setiap titiknya, dapat diartikan, setiap lingkaran berputar 2pi sejauh 2piR.)
+
+Definisi ini sulit dimanipulasi dan dinyatakan ke dalam rumus untuk kurva umum. Oleh karena itu digunakan definisi lain yang ekivalen.
+
+\subsection{5.10 Definisi Kurvatur dengan Fungsi Parametrik Panjang Kurva}\label{definisi-kurvatur-dengan-fungsi-parametrik-panjang-kurva}
+
+Setiap kurva diferensiabel dapat dinyatakan dengan persamaan parametrik terhadap panjang kurva s:
+
+\[\gamma(s) = (x(s),\ y(s)),\]dengan x dan y adalah fungsi riil yang diferensiabel, yang memenuhi:
+
+\[\|\gamma'(s)\|=\sqrt{x'(s)^2+y'(s)^2}=1.\]Ini berarti bahwa vektor singgung
+
+\[\mathbf{T}(s)=(x'(s),\ y'(s))\]memiliki norm 1 dan merupakan vektor singgung satuan.
+
+Apabila kurvanya memiliki turunan kedua, artinya turunan kedua x dan y ada, maka T'(s) ada. Vektor ini merupakan normal kurva yang arahnya menuju pusat kurvatur, norm-nya merupakan nilai kurvatur (kelengkungan):
+
+\[\begin{aligned}\mathbf{T}(s) &= \mathbf{\gamma}'(s),\\ \mathbf{T}^{2}(s) &=1\\text{(konstanta)}\Rightarrow \mathbf{T}'(s)\cdot \mathbf{T}(s)=0\\ \kappa(s)&=\|\mathbf{T}'(s)\|=\|\mathbf{\gamma}''(s)\|=\sqrt{x''(s)^{2}+y''(s)^{2}}.\end{aligned}\]
+
+Nilai
+
+\[R(s)=\frac{1}{\kappa(s)}\]disebut jari-jari (radius) kelengkungan kurva.
+
+Bilangan riil
+
+\[k(s) = \pm\kappa(s)\]
+
+disebut nilai kelengkungan bertanda.
+
+Contoh:
+
+Akan ditentukan kurvatur lingkaran
+
+\[x=r\cos t,\ y= r\sin t.\]\textgreater fx \&= r*cos(t); fy \&=r*sin(t);
+
+\textgreater\&assume(t\textgreater0,r\textgreater0); s \&=integrate(sqrt(diff(fx,t)\textsuperscript{2+diff(fy,t)}2),t,0,t); s // elemen panjang kurva, panjang busur lingkaran (s)
+
+\begin{verbatim}
+                                 r t
+\end{verbatim}
+
+\textgreater\&kill(s); fx \&= r*cos(s/r); fy \&=r*sin(s/r); // definisi ulang persamaan parametrik terhadap s dengan substitusi t=s/r
+
+\textgreater k \&= trigsimp(sqrt(diff(fx,s,2)\textsuperscript{2+diff(fy,s,2)}2)); \$k // nilai kurvatur lingkaran dengan menggunakan definisi di atas
+
+\[\frac{1}{r}\]Untuk representasi parametrik umum, misalkan
+
+\[x = x(t),\ y= y(t)\]merupakan persamaan parametrik untuk kurva bidang yang terdiferensialkan dua kali. Kurvatur untuk kurva tersebut didefinisikan sebagai
+
+\[\begin{aligned}\kappa &= \frac{d\phi}{ds}=\frac{\frac{d\phi}{dt}}{\frac{ds}{dt}}\quad (\phi \text{ adalah sudut kemiringan garis singgung dan }s \text{ adalah panjang kurva})\\ &=\frac{\frac{d\phi}{dt}}{\sqrt{(\frac{dx}{dt})^2+(\frac{dy}{dt})^2}}= \frac{\frac{d\phi}{dt}}{\sqrt{x'(t)^2+y'(t)^2}}.\end{aligned}.\]Selanjutnya, pembilang pada persamaan di atas dapat dicari sebagai berikut.
+
+\[\begin{aligned}\sec^2\phi\frac{d\phi}{dt} &= \frac{d}{dt}\left(\tan\phi\right)= \frac{d}{dt}\left(\frac{dy}{dx}\right)= \frac{d}{dt}\left(\frac{dy/dt}{dx/dt}\right)= \frac{d}{dt}\left(\frac{y'(t)}{x'(t)}\right)=\frac{x'(t)y''(t)-x''(t)y'(t)}{x'(t)^2}.\\ & \\ \frac{d\phi}{dt} &= \frac{1}{\sec^2\phi}\frac{x'(t)y''(t)-x''(t)y'(t)}{x'(t)^2}\\ &= \frac{1}{1+\tan^2\phi}\frac{x'(t)y''(t)-x''(t)y'(t)}{x'(t)^2}\\ &= \frac{1}{1+\left(\frac{y'(t)}{x'(t)}\right)^2}\frac{x'(t)y''(t)-x''(t)y'(t)}{x'(t)^2}\\ &= \frac{x'(t)y''(t)-x''(t)y'(t)}{x'(t)^2+y'(t)^2}.\end{aligned}\]Jadi, rumus kurvatur untuk kurva parametrik
+
+\[x=x(t),\ y=y(t)\]adalah
+
+\[\kappa(t) = \frac{x'(t)y''(t)-x''(t)y'(t)}{\left(x'(t)^2+y'(t)^2\right)^{3/2}}.\]Jika kurvanya dinyatakan dengan persamaan parametrik pada koordinat kutub
+
+\[x=r(\theta)\cos\theta,\ y=r(\theta)\sin\theta,\]maka rumus kurvaturnya adalah
+
+\[\kappa(\theta) = \frac{r(\theta)^2+2r'(\theta)^2-r(\theta)r''(\theta)}{\left(r'(\theta)^2+r'(\theta)^2\right)^{3/2}}.\](Silakan Anda turunkan rumus tersebut!)
+
+Contoh:
+
+Lingkaran dengan pusat (0,0) dan jari-jari r dapat dinyatakan dengan persamaan parametrik
+
+\[x=r\cos t,\ y=r\sin t.\]Nilai kelengkungan lingkaran tersebut adalah
+
+\[\kappa(t)=\frac{x'(t)y''(t)-x''(t)y'(t)}{\left(x'(t)^2+y'(t)^2\right)^{3/2}}=\frac{r^2}{r^3}=\frac 1 r.\]Hasil cocok dengan definisi kurvatur suatu kelengkungan.
+
+Kurva
+
+\[y=f(x)\]dapat dinyatakan ke dalam persamaan parametrik
+
+\[x=t,\ y=f(t),\ \text{ dengan } x'(t)=1,\ x''(t)=0,\]sehingga kurvaturnya adalah
+
+\[\kappa(t) = \frac{y''(t)}{\left(1+y'(t)^2\right)^{3/2}}.\]Contoh:
+
+Akan ditentukan kurvatur parabola
+
+\[y=ax^2+bx+c.\]\textgreater function f(x) \&= a*x\^{}2+b*x+c; \$y=f(x)
+
+\[y=a\,x^2+b\,x+c\]\textgreater function k(x) \&= (diff(f(x),x,2))/(1+diff(f(x),x)\textsuperscript{2)}(3/2); \$'k(x)=k(x) // kelengkungan parabola
+
+\[k\left(x\right)=\frac{2\,a}{\left(\left(2\,a\,x+b\right)^2+1\right)  ^{\frac{3}{2}}}\]\textgreater function f(x) \&= x\^{}2+x+1; \$y=f(x) // akan kita plot kelengkungan parabola untuk a=b=c=1
+
+\[y=x^2+x+1\]\textgreater function k(x) \&= (diff(f(x),x,2))/(1+diff(f(x),x)\textsuperscript{2)}(3/2); \$'k(x)=k(x) // kelengkungan parabola
+
+\[k\left(x\right)=\frac{2}{\left(\left(2\,x+1\right)^2+1\right)^{  \frac{3}{2}}}\]Berikut kita gambar parabola tersebut beserta kurva kelengkungan, kurva jari-jari kelengkungan dan salah satu lingkaran oskulasi di titik puncak parabola. Perhatikan, puncak parabola dan jari-jari lingkaran oskulasi di puncak parabola adalah
+
+\[(-1/2,3/4),\ 1/k(2)=1/2,\]sehingga pusat lingkaran oskulasi adalah (-1/2, 5/4).
+
+\textgreater plot2d({[}``f(x)'', ``k(x)''{]},-2,1, color={[}blue,red{]}); plot2d(``1/k(x)'',-1.5,1,color=green,\textgreater add); \ldots{}\\
+\textgreater{} plot2d(``-1/2+1/k(-1/2)*cos(x)'',``5/4+1/k(-1/2)*sin(x)'',xmin=0,xmax=2pi,\textgreater add,color=blue):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-204.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-204.png}
+\end{figure}
+
+Untuk kurva yang dinyatakan dengan fungsi implisit
+
+\[F(x,y)=0\]dengan turunan-turunan parsial
+
+\[F_x=\frac{\partial F}{\partial x},\ F_y=\frac{\partial F}{\partial y},\ F_{xy}=\frac{\partial}{\partial y}\left(\frac{\partial F}{\partial x}\right),\ F_{xx}=\frac{\partial}{\partial x}\left(\frac{\partial F}{\partial x}\right),\ F_{yy}=\frac{\partial}{\partial y}\left(\frac{\partial F}{\partial y}\right),\]berlaku
+
+\[F_x dx+ F_y dy = 0\text{ atau } \frac{dy}{dx}=-\frac{F_x}{F_y},\]sehingga kurvaturnya adalah
+
+\[\kappa =\frac {F_y^2F_{xx}-2F_xF_yF_{xy}+F_x^2F_{yy}}{\left(F_x^2+F_y^2\right)^{3/2}}.\](Silakan Anda turunkan sendiri!)
+
+Contoh 1:
+
+Parabola
+
+\[y=ax^2+bx+c\]dapat dinyatakan ke dalam persamaan implisit
+
+\[ax^2+bx+c-y=0.\]\textgreater function F(x,y) \&=a*x\^{}2+b*x+c-y; \$F(x,y)
+
+\[-y+a\,x^2+b\,x+c\]\textgreater Fx \&= diff(F(x,y),x), Fxx \&=diff(F(x,y),x,2), Fy \&=diff(F(x,y),y), Fxy \&=diff(diff(F(x,y),x),y), Fyy \&=diff(F(x,y),y,2)
+
+\begin{verbatim}
+                              2 a x + b
+
+
+                                 2 a
+
+
+                                 - 1
+
+
+                                  0
+
+
+                                  0
+\end{verbatim}
+
+\textgreater function k(x) \&= (Fy\textsuperscript{2*Fxx-2*Fx*Fy*Fxy+Fx}2*Fyy)/(Fx\textsuperscript{2+Fy}2)\^{}(3/2); \$'k(x)=k(x) // kurvatur parabola tersebut
+
+\[k\left(x\right)=\frac{2\,a}{\left(\left(2\,a\,x+b\right)^2+1\right)  ^{\frac{3}{2}}}\]Hasilnya sama dengan sebelumnya yang menggunakan persamaan parabola biasa.
+
+\textbf{Latihan}
+
+\begin{itemize}
+\tightlist
+\item
+  Bukalah buku Kalkulus.
+\item
+  Cari dan pilih beberapa (paling sedikit 5 fungsi berbeda tipe/bentuk/jenis) fungsi dari buku tersebut, kemudian definisikan di EMT pada baris-baris perintah berikut (jika perlu tambahkan lagi).
+\item
+  Untuk setiap fungsi, tentukan anti turunannya (jika ada), hitunglah integral tentu dengan batas-batas yang menarik (Anda tentukan sendiri), seperti contoh-contoh tersebut.
+\item
+  Lakukan hal yang sama untuk fungsi-fungsi yang tidak dapat diintegralkan (cari sedikitnya 3 fungsi).
+\item
+  Gambar grafik fungsi dan daerah integrasinya pada sumbu koordinat yang sama.
+\item
+  Gunakan integral tentu untuk mencari luas daerah yang dibatasi oleh dua kurva yang berpotongan di dua titik. (Cari dan gambar kedua kurva dan arsir (warnai) daerah yang dibatasi oleh keduanya.)
+\item
+  Gunakan integral tentu untuk menghitung volume benda putar kurva y= f(x) yang diputar mengelilingi sumbu x dari x=a sampai x=b, yakni
+\end{itemize}
+
+\[V = \int_a^b \pi (f(x)^2\ dx.\](Pilih fungsinya dan gambar kurva dan benda putar yang dihasilkan. Anda dapat mencari contoh-contoh bagaimana cara menggambar benda hasil perputaran suatu kurva.)
+
+\begin{itemize}
+\tightlist
+\item
+  Gunakan integral tentu untuk menghitung panjang kurva y=f(x) dari x=a sampai x=b dengan menggunakan rumus:
+\end{itemize}
+
+\[S = \int_a^b \sqrt{1+(f'(x))^2} \ dx.\](Pilih fungsi dan gambar kurvanya.)
+
+\begin{itemize}
+\tightlist
+\item
+  Apabila fungsi dinyatakan dalam koordinat kutub x=f(r,t), y=g(r,t), r=h(t), x=a bersesuaian dengan t=t0 dan x=b bersesuian dengan t=t1, maka rumus di atas akan menjadi:
+\end{itemize}
+
+\[S=\int_{t_0}^{t_1} \sqrt{x'(t)^2+y'(t)^2}\ dt.\] - Pilih beberapa kurva menarik (selain lingkaran dan parabola) dari buku kalkulus. Nyatakan setiap kurva tersebut dalam bentuk: * a. koordinat Kartesius (persamaan y=f(x)) * b. koordinat kutub ( r=r(theta)) * c.~persamaan parametrik x=x(t), y=y(t) * d.~persamaan implit F(x,y)=0
+
+\begin{itemize}
+\tightlist
+\item
+  Tentukan kurvatur masing-masing kurva dengan menggunakan keempat representasi tersebut (hasilnya harus sama).
+\item
+  Gambarlah kurva asli, kurva kurvatur, kurva jari-jari lingkaran oskulasi, dan salah satu lingkaran oskulasinya.
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Daerah yang dibatasi oleh kurva
+\end{enumerate}
+
+\[y= \frac {1}{\sqrt x}\]
+
+sumbu x, garis x=1 dan garis x=4 diputar mengelilingi sumbu y. Tentukan volume benda yang terbentuk dan gambarkan grafiknya
+
+\textgreater function f(x) \&= 1/sqrt(x); \$f(x)
+
+\[\frac{1}{\sqrt{x}}\]Volume benda yang terbentuk adalah
+
+\textgreater\$showev('integrate(2*pi*(f(x))\^{}2,x,1,4))
+
+\[2\,\pi\,\int_{1}^{4}{\frac{1}{x}\;dx}=2\,\pi\,\log 4\]Gambar ilustrasi dari benda yang terbentuk
+
+\textgreater plot3d(``f(x)'',2,0,2,rotate=2):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-219.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-219.png}
+\end{figure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Hitunglah panjang kurva
+\end{enumerate}
+
+\[y= \sqrt {4-x^2}\]
+
+untuk x=0 sampai x=2
+
+\textgreater function f(x)\&= \textbackslash sqrt(4-x\^{}2); \$f(x)
+
+\[\sqrt{4-x^2}\]\textgreater function df(x) \&= diff(f(x),x);\$df(x)
+
+\[-\frac{x}{\sqrt{4-x^2}}\]\textgreater\$showev('integrate(sqrt((1+df(x)\^{}2)),x,0,2))
+
+\[\int_{0}^{2}{\sqrt{\frac{x^2}{4-x^2}+1}\;dx}=\pi\]\textgreater\$float(\%)
+
+\[\int_{0.0}^{2.0}{\sqrt{\frac{x^2}{4.0-1.0\,x^2}+1.0}\;dx}=  3.141592653589793\] 3. Tentukan integral tentu dengan batas {[}-1,3{]} dari fungsi berikut
+
+\[f(x)= \frac {x}{10-x^2}\]\textgreater function map f(x) \&= (x)/(10-x\^{}2); \$f(x)
+
+\[\frac{x}{10-x^2}\]\textgreater\$showev('integrate(f(x),x,-1,3)), \$float(\%)
+
+\[\int_{-1.0}^{3.0}{\frac{x}{10.0-1.0\,x^2}\;dx}=1.09861228866811\]\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-228.png}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Tentukan turunan fungsi dibawah ini terhadap x dan hitung integral dengan batas x=0 sampai x=1
+\end{enumerate}
+
+\[y= \frac {1-x^2}{(x+1)^{2/3}}\]\textgreater function map f(x) \&= (1-x\textsuperscript{2)/(x+1)}(2/3); \$f(x)
+
+\[\frac{1-x^2}{\left(x+1\right)^{\frac{2}{3}}}\]Turunan fungsi terhadap x
+
+\textgreater function df(x) \&= diff(f(x),x); \$df(x)
+
+\[-\frac{2\,x}{\left(x+1\right)^{\frac{2}{3}}}-\frac{2\,\left(1-x^2  \right)}{3\,\left(x+1\right)^{\frac{5}{3}}}\]Integral dengan batas x=0 sampai x=1
+
+\textgreater\$showev('integrate(f(x),x,0,1))
+
+\[\int_{0}^{1}{\frac{1-x^2}{\left(x+1\right)^{\frac{2}{3}}}\;dx}=  \frac{9\,2^{\frac{1}{3}}}{7}-\frac{15}{14}\] 5. Tentukan volume benda putar yang terbentuk apabila y diputar mengelilingi sumbu x
+
+\[y=x^{3/2}\]
+
+antara x=1 dan x=3
+
+\textgreater function f(x)\&=x\^{}(3/2); \$f(x)
+
+\[x^{\frac{3}{2}}\]Volume benda putarnya adalah
+
+\textgreater\$showev('integrate(pi*(f(x))\^{}2,x,1,3))
+
+\[\pi\,\int_{1}^{3}{x^3\;dx}=20\,\pi\]Gambar grafik
+
+\textgreater plot3d(``f(x)'',2,0,2,rotate=2):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-236.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-236.png}
+\end{figure}
+
+\subsection{5.11 Barisan dan Deret}\label{barisan-dan-deret}
+
+(Catatan: bagian ini belum lengkap. Anda dapat membaca contoh-contoh pengguanaan EMT dan Maxima untuk menghitung limit barisan, rumus jumlah parsial suatu deret, jumlah tak hingga suatu deret konvergen, dan sebagainya. Anda dapat mengeksplor contoh-contoh di EMT atau perbagai panduan penggunaan Maxima di software Maxima atau dari Internet.)
+
+Barisan dapat didefinisikan dengan beberapa cara di dalam EMT, di antaranya:
+
+\begin{itemize}
+\tightlist
+\item
+  dengan cara yang sama seperti mendefinisikan vektor dengan elemen-elemen beraturan (menggunakan titik dua ``:'');
+\item
+  menggunakan perintah ``sequence'' dan rumus barisan (suku ke -n);
+\item
+  menggunakan perintah ``iterate'' atau ``niterate'';
+\item
+  menggunakan fungsi Maxima ``create\_list'' atau ``makelist'' untuk menghasilkan barisan simbolik;
+\item
+  menggunakan fungsi biasa yang inputnya vektor atau barisan;
+\item
+  menggunakan fungsi rekursif.
+\end{itemize}
+
+EMT menyediakan beberapa perintah (fungsi) terkait barisan, yakni: - sum: menghitung jumlah semua elemen suatu barisan - cumsum: jumlah kumulatif suatu barisan - differences: selisih antar elemen-elemen berturutan
+
+EMT juga dapat digunakan untuk menghitung jumlah deret berhingga maupun deret tak hingga, dengan menggunakan perintah (fungsi) ``sum''. Perhitungan dapat dilakukan secara numerik maupun simbolik dan eksak.
+
+Berikut adalah beberapa contoh perhitungan barisan dan deret menggunakan EMT.
+
+\textgreater1:10 // barisan sederhana
+
+\begin{verbatim}
+[1,  2,  3,  4,  5,  6,  7,  8,  9,  10]
+\end{verbatim}
+
+\textgreater1:2:30
+
+\begin{verbatim}
+[1,  3,  5,  7,  9,  11,  13,  15,  17,  19,  21,  23,  25,  27,  29]
+\end{verbatim}
+
+\subsection{5.12 Iterasi dan Barisan}\label{iterasi-dan-barisan}
+
+EMT menyediakan fungsi iterate(``g(x)'', x0, n) untuk melakukan iterasi
+
+\[x_{k+1}=g(x_k), \ x_0=x_0, k= 1, 2, 3, ..., n.\]Berikut ini disajikan contoh-contoh penggunaan iterasi dan rekursi dengan EMT. Contoh pertama menunjukkan pertumbuhan dari nilai awal 1000 dengan laju pertambahan 5\%, selama 10 periode.
+
+\textgreater q=1.05; iterate(``x*q'',1000,n=10)'
+
+\begin{verbatim}
+         1000 
+         1050 
+       1102.5 
+      1157.63 
+      1215.51 
+      1276.28 
+       1340.1 
+       1407.1 
+      1477.46 
+      1551.33 
+      1628.89 
+\end{verbatim}
+
+Contoh berikutnya memperlihatkan bahaya menabung di bank pada masa sekarang! Dengan bunga tabungan sebesar 6\% per tahun atau 0.5\% per bulan dipotong pajak 20\%, dan biaya administrasi 10000 per bulan, tabungan sebesar 1 juta tanpa diambil selama sekitar 10 tahunan akan habis diambil oleh bank!
+
+\textgreater r=0.005; plot2d(iterate(``(1+0.8*r)*x-10000'',1000000,n=130)):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-238.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-238.png}
+\end{figure}
+
+Silakan Anda coba-coba, dengan tabungan minimal berapa agar tidak akan habis diambil oleh bank dengan ketentuan bunga dan biaya administrasi seperti di atas.
+
+Berikut adalah perhitungan minimal tabungan agar aman di bank dengan bunga sebesar r dan biaya administrasi a, pajak bunga 20\%.
+
+\textgreater\$solve(0.8*r*A-a,A), \$\% with {[}r=0.005, a=10{]}
+
+\[\left[ A=2500.0 \right]\]
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-240.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-240.png}
+\end{figure}
+
+Berikut didefinisikan fungsi untuk menghitung saldo tabungan, kemudian dilakukan iterasi.
+
+\textgreater function saldo(x,r,a) := round((1+0.8*r)*x-a,2);
+
+\textgreater iterate(\{\{``saldo'',0.005,10\}\},1000,n=6)
+
+\begin{verbatim}
+[1000,  994,  987.98,  981.93,  975.86,  969.76,  963.64]
+\end{verbatim}
+
+\textgreater iterate(\{\{``saldo'',0.005,10\}\},2000,n=6)
+
+\begin{verbatim}
+[2000,  1998,  1995.99,  1993.97,  1991.95,  1989.92,  1987.88]
+\end{verbatim}
+
+\textgreater iterate(\{\{``saldo'',0.005,10\}\},2500,n=6)
+
+\begin{verbatim}
+[2500,  2500,  2500,  2500,  2500,  2500,  2500]
+\end{verbatim}
+
+Tabungan senilai 2,5 juta akan aman dan tidak akan berubah nilai (jika tidak ada penarikan), sedangkan jika tabungan awal kurang dari 2,5 juta, lama kelamaan akan berkurang meskipun tidak pernah dilakukan penarikan uang tabungan.
+
+\textgreater iterate(\{\{``saldo'',0.005,10\}\},3000,n=6)
+
+\begin{verbatim}
+[3000,  3002,  3004.01,  3006.03,  3008.05,  3010.08,  3012.12]
+\end{verbatim}
+
+Tabungan yang lebih dari 2,5 juta baru akan bertambah jika tidak ada penarikan.
+
+Untuk barisan yang lebih kompleks dapat digunakan fungsi ``sequence()''. Fungsi ini menghitung nilai-nilai x{[}n{]} dari semua nilai sebelumnya, x{[}1{]},\ldots,x{[}n-1{]} yang diketahui.
+
+Berikut adalah contoh barisan Fibonacci.
+
+\[x_n = x_{n-1}+x_{n-2}, \quad x_1=1, \quad x_2 =1\]\textgreater sequence(``x{[}n-1{]}+x{[}n-2{]}'',{[}1,1{]},15)
+
+\begin{verbatim}
+[1,  1,  2,  3,  5,  8,  13,  21,  34,  55,  89,  144,  233,  377,  610]
+\end{verbatim}
+
+Barisan Fibonacci memiliki banyak sifat menarik, salah satunya adalah akar pangkat ke-n suku ke-n akan konvergen ke pecahan emas:
+
+\textgreater\$'(1+sqrt(5))/2=float((1+sqrt(5))/2)
+
+\[\frac{\sqrt{5}+1}{2}=1.618033988749895\]\textgreater plot2d(sequence(``x{[}n-1{]}+x{[}n-2{]}'',{[}1,1{]},250)\^{}(1/(1:250))):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-243.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-243.png}
+\end{figure}
+
+Barisan yang sama juga dapat dihasilkan dengan menggunakan loop.
+
+\textgreater x=ones(500); for k=3 to 500; x{[}k{]}=x{[}k-1{]}+x{[}k-2{]}; end;
+
+Rekursi dapat dilakukan dengan menggunakan rumus yang tergantung pada semua elemen sebelumnya. Pada contoh berikut, elemen ke-n merupakan jumlah (n-1) elemen sebelumnya, dimulai dengan 1 (elemen ke-1). Jelas, nilai elemen ke-n adalah 2\^{}(n-2), untuk n=2, 4, 5, \ldots.
+
+\textgreater sequence(``sum(x)'',1,10)
+
+\begin{verbatim}
+[1,  1,  2,  4,  8,  16,  32,  64,  128,  256]
+\end{verbatim}
+
+Selain menggunakan ekspresi dalam x dan n, kita juga dapat menggunakan fungsi.
+
+Pada contoh berikut, digunakan iterasi
+
+\[x_n =A \cdot x_{n-1},\]dengan A suatu matriks 2x2, dan setiap x{[}n{]} merupakan matriks/vektor 2x1.
+
+\textgreater A={[}1,1;1,2{]}; function suku(x,n) := A.x{[},n-1{]}
+
+\textgreater sequence(``suku'',{[}1;1{]},6)
+
+\begin{verbatim}
+Real 2 x 6 matrix
+
+            1             2             5            13     ...
+            1             3             8            21     ...
+\end{verbatim}
+
+Hasil yang sama juga dapat diperoleh dengan menggunakan fungsi perpangkatan matriks ``matrixpower()''. Cara ini lebih cepat, karena hanya menggunakan perkalian matriks sebanyak log\_2(n).
+
+\[x_n=A.x_{n-1}=A^2.x_{n-2}=A^3.x_{n-3}= ... = A^{n-1}.x_1.\]\textgreater sequence(``matrixpower(A,n).{[}1;1{]}'',1,6)
+
+\begin{verbatim}
+Real 2 x 6 matrix
+
+            1             5            13            34     ...
+            1             8            21            55     ...
+\end{verbatim}
+
+\subsection{5.13 Spiral Theodorus}\label{spiral-theodorus}
+
+image: Spiral\_of\_Theodorus.png
+
+Spiral Theodorus (spiral segitiga siku-siku) dapat digambar secara rekursif. Rumus rekursifnya adalah:
+
+\[x_n = \left( 1 + \frac{i}{\sqrt{n-1}} \right) \, x_{n-1}, \quad x_1=1,\]yang menghasilkan barisan bilangan kompleks.
+
+\textgreater function g(n) := 1+I/sqrt(n)
+
+Rekursinya dapat dijalankan sebanyak 17 untuk menghasilkan barisan 17 bilangan kompleks, kemudian digambar bilangan-bilangan kompleksnya.
+
+\textgreater x=sequence(``g(n-1)*x{[}n-1{]}'',1,17); plot2d(x,r=3.5); textbox(latex(``Spiral\textbackslash{} Theodorus''),0.4):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-247.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-247.png}
+\end{figure}
+
+Selanjutnya dihubungan titik 0 dengan titik-titik kompleks tersebut menggunakan loop.
+
+\textgreater for i=1:cols(x); plot2d({[}0,x{[}i{]}{]},\textgreater add); end:
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-248.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-248.png}
+\end{figure}
+
+\textgreater{}
+
+Spiral tersebut juga dapat didefinisikan menggunakan fungsi rekursif, yang tidak memmerlukan indeks dan bilangan kompleks. Dalam hal ini diigunakan vektor kolom pada bidang.
+
+\textgreater function gstep (v) \ldots{}
+
+\begin{verbatim}
+w=[-v[2];v[1]];
+return v+w/norm(w);
+endfunction
+\end{verbatim}
+
+Jika dilakukan iterasi 16 kali dimulai dari {[}1;0{]} akan didapatkan matriks yang memuat vektor-vektor dari setiap iterasi.
+
+\textgreater x=iterate(``gstep'',{[}1;0{]},16); plot2d(x{[}1{]},x{[}2{]},r=3.5,\textgreater points):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-249.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-249.png}
+\end{figure}
+
+\subsection{5.14 Kekonvergenan}\label{kekonvergenan}
+
+Terkadang kita ingin melakukan iterasi sampai konvergen. Apabila iterasinya tidak konvergen setelah ditunggu lama, Anda dapat menghentikannya dengan menekan tombol {[}ESC{]}.
+
+\textgreater iterate(``cos(x)'',1) // iterasi x(n+1)=cos(x(n)), dengan x(0)=1.
+
+\begin{verbatim}
+0.739085133216
+\end{verbatim}
+
+Iterasi tersebut konvergen ke penyelesaian persamaan
+
+\[x = \cos(x).\]Iterasi ini juga dapat dilakukan pada interval, hasilnya adalah barisan interval yang memuat akar tersebut.
+
+\textgreater hasil := iterate(``cos(x)'',\textsubscript{1,2}) //iterasi x(n+1)=cos(x(n)), dengan interval awal (1, 2)
+
+\begin{verbatim}
+~0.739085133211,0.7390851332133~
+\end{verbatim}
+
+Jika interval hasil tersebut sedikit diperlebar, akan terlihat bahwa interval tersebut memuat akar persamaan x=cos(x).
+
+\textgreater h=expand(hasil,100), cos(h) \textless\textless{} h
+
+\begin{verbatim}
+~0.73908513309,0.73908513333~
+1
+\end{verbatim}
+
+Iterasi juga dapat digunakan pada fungsi yang didefinisikan.
+
+\textgreater function f(x) := (x+2/x)/2
+
+Iterasi x(n+1)=f(x(n)) akan konvergen ke akar kuadrat 2.
+
+\textgreater iterate(``f'',2), sqrt(2)
+
+\begin{verbatim}
+1.41421356237
+1.41421356237
+\end{verbatim}
+
+Jika pada perintah iterate diberikan tambahan parameter n, maka hasil iterasinya akan ditampilkan mulai dari iterasi pertama sampai ke-n.
+
+\textgreater iterate(``f'',2,5)
+
+\begin{verbatim}
+[2,  1.5,  1.41667,  1.41422,  1.41421,  1.41421]
+\end{verbatim}
+
+Untuk iterasi ini tidak dapat dilakukan terhadap interval.
+
+\textgreater niterate(``f'',\textsubscript{1,2},5)
+
+\begin{verbatim}
+[ ~1,2~,  ~1,2~,  ~1,2~,  ~1,2~,  ~1,2~,  ~1,2~ ]
+\end{verbatim}
+
+Perhatikan, hasil iterasinya sama dengan interval awal. Alasannya adalah perhitungan dengan interval bersifat terlalu longgar. Untuk meingkatkan perhitungan pada ekspresi dapat digunakan pembagian intervalnya, menggunakan fungsi ieval().
+
+\textgreater function s(x) := ieval(``(x+2/x)/2'',x,10)
+
+Selanjutnya dapat dilakukan iterasi hingga diperoleh hasil optimal, dan intervalnya tidak semakin mengecil. Hasilnya berupa interval yang memuat akar persamaan:
+
+\[x = \frac{1}{2} \left( x + \frac{2}{x} \right).\]Satu-satunya solusi adalah
+
+\[x = \sqrt2.\]\textgreater iterate(``s'',\textsubscript{1,2})
+
+\begin{verbatim}
+~1.41421356236,1.41421356239~
+\end{verbatim}
+
+Fungsi ``iterate()'' juga dapat bekerja pada vektor. Berikut adalah contoh fungsi vektor, yang menghasilkan rata-rata aritmetika dan rata-rata geometri.
+
+\[(a_{n+1},b_{n+1}) = \left( \frac{a_n+b_n}{2}, \sqrt{a_nb_n} \right)\]Iterasi ke-n disimpan pada vektor kolom x{[}n{]}.
+
+\textgreater function g(x) := {[}(x{[}1{]}+x{[}2{]})/2;sqrt(x{[}1{]}*x{[}2{]}){]}
+
+Iterasi dengan menggunakan fungsi tersebut akan konvergen ke rata-rata aritmetika dan geometri dari nilai-nilai awal.
+
+\textgreater iterate(``g'',{[}1;5{]})
+
+\begin{verbatim}
+      2.60401 
+      2.60401 
+\end{verbatim}
+
+Hasil tersebut konvergen agak cepat, seperti kita cek sebagai berikut.
+
+\textgreater iterate(``g'',{[}1;5{]},4)
+
+\begin{verbatim}
+            1             3       2.61803       2.60403       2.60401 
+            5       2.23607       2.59002       2.60399       2.60401 
+\end{verbatim}
+
+Iterasi pada interval dapat dilakukan dan stabil, namun tidak menunjukkan bahwa limitnya pada batas-batas yang dihitung.
+
+\textgreater iterate(``g'',{[}\textsubscript{1};\textsubscript{5}{]},4)
+
+\begin{verbatim}
+Interval 2 x 5 matrix
+
+~0.999999999999999778,1.00000000000000022~     ...
+~4.99999999999999911,5.00000000000000089~     ...
+\end{verbatim}
+
+Iterasi berikut konvergen sangat lambat.
+
+\[x_{n+1} = \sqrt{x_n}.\]\textgreater iterate(``sqrt(x)'',2,10)
+
+\begin{verbatim}
+[2,  1.41421,  1.18921,  1.09051,  1.04427,  1.0219,  1.01089,
+1.00543,  1.00271,  1.00135,  1.00068]
+\end{verbatim}
+
+Kekonvergenan iterasi tersebut dapat dipercepatdengan percepatan Steffenson:
+
+\textgreater steffenson(``sqrt(x)'',2,10)
+
+\begin{verbatim}
+[1.04888,  1.00028,  1,  1]
+\end{verbatim}
+
+\subsection{5.15 Iterasi menggunakan Loop yang ditulis Langsung}\label{iterasi-menggunakan-loop-yang-ditulis-langsung}
+
+Berikut adalah beberapa contoh penggunaan loop untuk melakukan iterasi yang ditulis langsung pada baris perintah.
+
+\textgreater x=2; repeat x=(x+2/x)/2; until x\^{}2\textasciitilde=2; end; x,
+
+\begin{verbatim}
+1.41421356237
+\end{verbatim}
+
+Penggabungan matriks menggunakan tanda ``\textbar{}'' dapat digunakan untuk menyimpan semua hasil iterasi.
+
+\textgreater v={[}1{]}; for i=2 to 8; v=v\textbar(v{[}i-1{]}*i); end; v,
+
+\begin{verbatim}
+[1,  2,  6,  24,  120,  720,  5040,  40320]
+\end{verbatim}
+
+hasil iterasi juga dapat disimpan pada vektor yang sudah ada.
+
+\textgreater v=ones(1,100); for i=2 to cols(v); v{[}i{]}=v{[}i-1{]}*i; end; \ldots{}\\
+\textgreater{} plot2d(v,logplot=1); textbox(latex(\&log(n)),x=0.5):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-255.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-255.png}
+\end{figure}
+
+\textgreater A ={[}0.5,0.2;0.7,0.1{]}; b={[}2;2{]}; \ldots{}\\
+\textgreater{} x={[}1;1{]}; repeat xnew=A.x-b; until all(xnew\textasciitilde=x); x=xnew; end; \ldots{}\\
+\textgreater{} x,
+
+\begin{verbatim}
+     -7.09677 
+     -7.74194 
+\end{verbatim}
+
+\subsection{5.16 Iterasi di dalam Fungsi}\label{iterasi-di-dalam-fungsi}
+
+Fungsi atau program juga dapat menggunakan iterasi dan dapat digunakan untuk melakukan iterasi. Berikut adalah beberapa contoh iterasi di dalam fungsi.
+
+Contoh berikut adalah suatu fungsi untuk menghitung berapa lama suatu iterasi konvergen. Nilai fungsi tersebut adalah hasil akhir iterasi dan banyak iterasi sampai konvergen.
+
+\textgreater function map hiter(f\$,x0) \ldots{}
+
+\begin{verbatim}
+x=x0;
+maxiter=0;
+repeat
+  xnew=f$(x);
+  maxiter=maxiter+1;
+  until xnew~=x;
+  x=xnew;
+end;
+return maxiter;
+endfunction
+\end{verbatim}
+
+Misalnya, berikut adalah iterasi untuk mendapatkan hampiran akar kuadrat 2, cukup cepat, konvergen pada iterasi ke-5, jika dimulai dari hampiran awal 2.
+
+\textgreater hiter(``(x+2/x)/2'',2)
+
+\begin{verbatim}
+5
+\end{verbatim}
+
+Karena fungsinya didefinisikan menggunakan ``map''. maka nilai awalnya dapat berupa vektor.
+
+\textgreater x=1.5:0.1:10; hasil=hiter(``(x+2/x)/2'',x); \ldots{}\\
+\textgreater{} plot2d(x,hasil):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-256.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-256.png}
+\end{figure}
+
+Dari gambar di atas terlihat bahwa kekonvergenan iterasinya semakin lambat, untuk nilai awal semakin besar, namun penambahnnya tidak kontinu. Kita dapat menemukan kapan maksimum iterasinya bertambah.
+
+\textgreater hasil{[}1:10{]}
+
+\begin{verbatim}
+[4,  5,  5,  5,  5,  5,  6,  6,  6,  6]
+\end{verbatim}
+
+\textgreater x{[}nonzeros(differences(hasil)){]}
+
+\begin{verbatim}
+[1.5,  2,  3.4,  6.6]
+\end{verbatim}
+
+maksimum iterasi sampai konvergen meningkat pada saat nilai awalnya 1.5, 2, 3.4, dan 6.6.
+
+Contoh berikutnya adalah metode Newton pada polinomial kompleks berderajat 3.
+
+\textgreater p \&= x\^{}3-1; newton \&= x-p/diff(p,x); \$newton
+
+\[x-\frac{x^3-1}{3\,x^2}\]Selanjutnya didefinisikan fungsi untuk melakukan iterasi (aslinya 10 kali).
+
+\textgreater function iterasi(f\$,x,n=10) \ldots{}
+
+\begin{verbatim}
+loop 1 to n; x=f$(x); end;
+return x;
+endfunction
+\end{verbatim}
+
+Kita mulai dengan menentukan titik-titik grid pada bidang kompleksnya.
+
+\textgreater r=1.5; x=linspace(-r,r,501); Z=x+I*x'; W=iterasi(newton,Z);
+
+Berikut adalah akar-akar polinomial di atas.
+
+\textgreater z=\&solve(p)()
+
+\begin{verbatim}
+[ -0.5+0.866025i,  -0.5-0.866025i,  1+0i  ]
+\end{verbatim}
+
+Untuk menggambar hasil iterasinya, dihitung jarak dari hasil iterasi ke-10 ke masing-masing akar, kemudian digunakan untuk menghitung warna yang akan digambar, yang menunjukkan limit untuk masing-masing nilai awal.
+
+Fungsi plotrgb() menggunakan jendela gambar terkini untuk menggambar warna RGB sebagai matriks.
+
+\textgreater C=rgb(max(abs(W-z{[}1{]}),1),max(abs(W-z{[}2{]}),1),max(abs(W-z{[}3{]}),1)); \ldots{}\\
+\textgreater{} plot2d(none,-r,r,-r,r); plotrgb(C):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-258.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-258.png}
+\end{figure}
+
+\subsection{5.17 Iterasi Simbolik}\label{iterasi-simbolik}
+
+Seperti sudah dibahas sebelumnya, untuk menghasilkan barisan ekspresi simbolik dengan Maxima dapat digunakan fungsi makelist().
+
+\textgreater\&powerdisp:true // untuk menampilkan deret pangkat mulai dari suku berpangkat terkecil
+
+\begin{verbatim}
+                                 true
+\end{verbatim}
+
+\textgreater deret \&= makelist(taylor(exp(x),x,0,k),k,1,3); \$deret // barisan deret Taylor untuk e\^{}x
+
+\[\left[ 1+x , 1+x+\frac{x^2}{2} , 1+x+\frac{x^2}{2}+\frac{x^3}{6}   \right]\]Untuk mengubah barisan deret tersebut menjadi vektor string di EMT digunakan fungsi mxm2str(). Selanjutnya, vektor string/ekspresi hasilnya dapat digambar seperti menggambar vektor eskpresi pada EMT.
+
+\textgreater plot2d(``exp(x)'',0,3); // plot fungsi aslinya, e\^{}x
+
+\textgreater plot2d(mxm2str(``deret''),\textgreater add,color=4:6): // plot ketiga deret taylor hampiran fungsi tersebut
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-260.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-260.png}
+\end{figure}
+
+Selain cara di atas dapat juga dengan cara menggunakan indeks pada vektor/list yang dihasilkan.
+
+\textgreater\$deret{[}3{]}
+
+\[1+x+\frac{x^2}{2}+\frac{x^3}{6}\]\textgreater plot2d({[}``exp(x)'',\&deret{[}1{]},\&deret{[}2{]},\&deret{[}3{]}{]},0,3,color=1:4):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-262.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-262.png}
+\end{figure}
+
+\textgreater\$sum(sin(k*x)/k,k,1,5)
+
+\[\sin x+\frac{\sin \left(2\,x\right)}{2}+\frac{\sin \left(3\,x  \right)}{3}+\frac{\sin \left(4\,x\right)}{4}+\frac{\sin \left(5\,x  \right)}{5}\]Berikut adalah cara menggambar kurva
+
+\textgreater plot2d(\&sum(sin((2*k+1)*x)/(2*k+1),k,0,20),0,2pi):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-264.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-264.png}
+\end{figure}
+
+Hal serupa juga dapat dilakukan dengan menggunakan matriks, misalkan kita akan menggambar kurva
+
+\textgreater x=linspace(0,2pi,1000); k=1:100; y=sum(sin(k*x')/k)'; plot2d(x,y):
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-265.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-265.png}
+\end{figure}
+
+\subsection{5.18 Tabel Fungsi}\label{tabel-fungsi}
+
+Terdapat cara menarik untuk menghasilkan barisan dengan ekspresi Maxima. Perintah mxmtable() berguna untuk menampilkan dan menggambar barisan dan menghasilkan barisan sebagai vektor kolom.
+
+Sebagai contoh berikut adalah barisan turunan ke-n x\^{}x di x=1.
+
+\textgreater mxmtable(``diffat(x\^{}x,x=1,n)'',``n'',1,8,frac=1);
+
+\begin{verbatim}
+        1 
+        2 
+        3 
+        8 
+       10 
+       54 
+      -42 
+      944 
+\end{verbatim}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio]{images/Alfi Nur Azumah_23030630002_EMT4Kalkulus-266.png}}
+\caption{images/Alfi\%20Nur\%20Azumah\_23030630002\_EMT4Kalkulus-266.png}
+\end{figure}
+
+\textgreater\$'sum(k, k, 1, n) = factor(ev(sum(k, k, 1, n),simpsum=true)) // simpsum:menghitung deret secara simbolik
+
+\[\sum_{k=1}^{n}{k}=\frac{n\,\left(1+n\right)}{2}\]\textgreater\$'sum(1/(3\^{}k+k), k, 0, inf) = factor(ev(sum(1/(3\^{}k+k), k, 0, inf),simpsum=true))
+
+\[\sum_{k=0}^{\infty }{\frac{1}{k+3^{k}}}=\sum_{k=0}^{\infty }{\frac{  1}{k+3^{k}}}\]Di sini masih gagal, hasilnya tidak dihitung.
+
+\textgreater\$'sum(1/x\^{}2, x, 1, inf)= ev(sum(1/x\^{}2, x, 1, inf),simpsum=true) // ev: menghitung nilai ekspresi
+
+\[\sum_{x=1}^{\infty }{\frac{1}{x^2}}=\frac{\pi^2}{6}\]\textgreater\$'sum((-1)\^{}(k-1)/k, k, 1, inf) = factor(ev(sum((-1)\^{}(x-1)/x, x, 1, inf),simpsum=true))
+
+\[\sum_{k=1}^{\infty }{\frac{\left(-1\right)^{-1+k}}{k}}=-\sum_{x=1  }^{\infty }{\frac{\left(-1\right)^{x}}{x}}\]Di sini masih gagal, hasilnya tidak dihitung.
+
+\textgreater\$'sum((-1)\^{}k/(2*k-1), k, 1, inf) = factor(ev(sum((-1)\^{}k/(2*k-1), k, 1, inf),simpsum=true))
+
+\[\sum_{k=1}^{\infty }{\frac{\left(-1\right)^{k}}{-1+2\,k}}=\sum_{k=1  }^{\infty }{\frac{\left(-1\right)^{k}}{-1+2\,k}}\]\textgreater\$ev(sum(1/n!, n, 0, inf),simpsum=true)
+
+\[\sum_{n=0}^{\infty }{\frac{1}{n!}}\]Di sini masih gagal, hasilnya tidak dihitung, harusnya hasilnya e.
+
+\textgreater\&assume(abs(x)\textless1); \$'sum(a*x\^{}k, k, 0, inf)=ev(sum(a*x\^{}k, k, 0, inf),simpsum=true), \&forget(abs(x)\textless1);
+
+\[a\,\sum_{k=0}^{\infty }{x^{k}}=\frac{a}{1-x}\]Deret geometri tak hingga, dengan asumsi rasional antara -1 dan 1.
+
+\textgreater\$'sum(x\textsuperscript{k/k!,k,0,inf)=ev(sum(x}k/k!,k,0,inf),simpsum=true)
+
+\[\sum_{k=0}^{\infty }{\frac{x^{k}}{k!}}=\sum_{k=0}^{\infty }{\frac{x  ^{k}}{k!}}\]\textgreater\$limit(sum(x\^{}k/k!,k,0,n),n,inf)
+
+\[\lim_{n\rightarrow \infty }{\sum_{k=0}^{n}{\frac{x^{k}}{k!}}}\]\textgreater function d(n) \&= sum(1/(k\^{}2-k),k,2,n); \$'d(n)=d(n)
+
+\[d\left(n\right)=\sum_{k=2}^{n}{\frac{1}{-k+k^2}}\]\textgreater\$d(10)=ev(d(10),simpsum=true)
+
+\[\sum_{k=2}^{10}{\frac{1}{-k+k^2}}=\frac{9}{10}\]\textgreater\$d(100)=ev(d(100),simpsum=true)
+
+\[\sum_{k=2}^{100}{\frac{1}{-k+k^2}}=\frac{99}{100}\] 
+
+\subsection{5.19 Deret Taylor}
+
+Deret Taylor suatu fungsi f yang diferensiabel sampai tak hingga di sekitar x=a adalah:
+
+\[f(x) = \sum_{k=0}^\infty \frac{(x-a)^k f^{(k)}(a)}{k!}.\]\textgreater\$'e\^{}x =taylor(exp(x),x,0,10) // deret Taylor e\^{}x di sekitar x=0, sampai suku ke-11
+
+\[e^{x}=1+x+\frac{x^2}{2}+\frac{x^3}{6}+\frac{x^4}{24}+\frac{x^5}{120  }+\frac{x^6}{720}+\frac{x^7}{5040}+\frac{x^8}{40320}+\frac{x^9}{  362880}+\frac{x^{10}}{3628800}\]\textgreater\$'log(x)=taylor(log(x),x,1,10)// deret log(x) di sekitar x=1
+
+\[\log x=-1-\frac{\left(-1+x\right)^2}{2}+\frac{\left(-1+x\right)^3}{  3}-\frac{\left(-1+x\right)^4}{4}+\frac{\left(-1+x\right)^5}{5}-  \frac{\left(-1+x\right)^6}{6}+\frac{\left(-1+x\right)^7}{7}-\frac{  \left(-1+x\right)^8}{8}+\frac{\left(-1+x\right)^9}{9}-\frac{\left(-1  +x\right)^{10}}{10}+x\]
+
+\backmatter
+\end{document}
