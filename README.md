@@ -1,1 +1,1 @@
-EMT4aljabar_23030630003.en
+Aplikasi Komputer ini berisi file-file Euler Math Toolbox (EMT), Markdown, LaTex, dan gambar-gambar pendukung file-file tersebut
